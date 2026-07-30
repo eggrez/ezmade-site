@@ -1,0 +1,14 @@
+// HeroContent.tsx
+
+import dynamic from "next/dynamic";
+
+const HeroCloudLogoParticles = dynamic(
+  () => import("./HeroCloudLogoParticles"),
+  { ssr: false },
+);
+
+// Внутри HeroContent, после фонового cloud video и до финальных overlay:
+// <HeroCloudLogoParticles progress={progress} />
+
+// Удали из HeroContent старый:
+// <HeroLogoGeometry3D progress={progress} />
