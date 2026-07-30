@@ -8,16 +8,8 @@ import PortraitImage from "@/components/media/PortraitImage";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
-import type { HomeSceneProps } from "./types";
-export default function AboutContent({
-  progress,
-}: HomeSceneProps) {
+export default function About() {
   const shouldReduceMotion = useReducedMotion();
-  import {
-  motion,
-  useReducedMotion,
-  useTransform,
-} from "framer-motion";
 
   return (
     <motion.div
