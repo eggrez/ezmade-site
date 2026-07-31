@@ -225,7 +225,7 @@ export default function Hero() {
         >
           <video
             className="h-full w-full object-cover"
-            src="/videos/hero.mp4"
+            src="https://media.ezmade.pro/videos/hero.mp4"
             autoPlay
             muted
             loop

@@ -50,7 +50,7 @@ const projectMedia: Record<string, ProjectMediaConfig> = {
 
   videos: [
     {
-      src: "video_1.mp4",
+      src: "video_1_v2.mp4",
       poster: "cover_1.jpg",
       label: "Film 01",
     },
@@ -190,7 +190,7 @@ const projectMedia: Record<string, ProjectMediaConfig> = {
     cover: "cover.jpg",
     videos: [
       {
-        src: "video.mp4",
+        src: "video_v2.mp4",
         poster: "cover.jpg",
       },
     ],
@@ -206,8 +206,15 @@ const projectMedia: Record<string, ProjectMediaConfig> = {
   },
 };
 
-function resolveProjectMediaPath(slug: string, filename: string) {
+const MEDIA_URL =
+  process.env.NEXT_PUBLIC_MEDIA_URL ?? "https://media.ezmade.pro";
+
+function resolveProjectImagePath(slug: string, filename: string) {
   return `/projects/${slug}/${filename}`;
+}
+
+function resolveProjectVideoPath(slug: string, filename: string) {
+  return `${MEDIA_URL}/projects/${slug}/${filename}`;
 }
 
 export function getProjectCover(slug: string) {
@@ -217,7 +224,7 @@ export function getProjectCover(slug: string) {
     return "";
   }
 
-  return resolveProjectMediaPath(slug, config.cover);
+ return resolveProjectImagePath(slug, config.cover);
 }
 
 export function getProjectVideos(slug: string): ProjectVideoItem[] {
@@ -228,8 +235,11 @@ export function getProjectVideos(slug: string): ProjectVideoItem[] {
   }
 
   return config.videos.map((video) => ({
-    src: resolveProjectMediaPath(slug, video.src),
-    poster: resolveProjectMediaPath(slug, video.poster ?? config.cover),
+    src: resolveProjectVideoPath(slug, video.src),
+poster: resolveProjectImagePath(
+  slug,
+  video.poster ?? config.cover,
+),
     label: video.label,
   }));
 }
@@ -246,7 +256,7 @@ export function getProjectGallery(slug: string) {
   }
 
   return config.gallery.map((item) =>
-    resolveProjectMediaPath(slug, item.filename),
+    resolveProjectImagePath(slug, item.filename),
   );
 }
 
@@ -258,7 +268,7 @@ export function getProjectGalleryItems(slug: string): ProjectGalleryItem[] {
   }
 
   return config.gallery.map((item) => ({
-    src: resolveProjectMediaPath(slug, item.filename),
+    src: resolveProjectImagePath(slug, item.filename),
     layout: item.layout,
   }));
 } 

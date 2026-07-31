@@ -14,7 +14,7 @@ type HeroContentProps = {
   rawProgress: MotionValue<number>;
 };
 
-const HERO_VIDEO_SRC = "/videos/hero.mp4";
+const HERO_VIDEO_SRC = "https://media.ezmade.pro/videos/hero.mp4";
 const EZ_LOGO_SRC = "/images/ez-wordmark-glass-mask.svg";
 
 export default function HeroContent({
