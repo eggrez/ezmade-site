@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg id="_Слой_1" data-name="Слой_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 2560 1080">
+<svg id="_Слой_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 2560 1080">
   <!-- Generator: Adobe Illustrator 29.8.2, SVG Export Plug-In . SVG Version: 2.1.1 Build 3)  -->
   <defs>
     <style>
@@ -8,5 +8,5 @@
       }
     </style>
   </defs>
-  <path class="st0" d="M1254.1,1006.09v-180.69l715.69-545.08h-715.69V99.89h1162.94v180.69l-715.69,545.08h715.69v180.44h-1162.94ZM108.97,1006.09V99.89h1132.31v180.44H466.01v175.97l606.8-4.11-242.64,184.54h-364.16v188.92h775.27v180.44H108.97Z"/>
+  <path class="st0" d="M1271.09,993.1v-180.69l715.69-545.08h-715.69V86.89h1162.94v180.69l-715.69,545.08h715.69v180.44h-1162.94ZM125.96,993.1V86.89h1132.31v180.44H483v175.97l606.8-4.11-242.64,184.54h-364.16v188.92h775.27v180.44H125.96Z"/>
 </svg>

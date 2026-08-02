@@ -231,69 +231,140 @@ const buttonBlur = useTransform(
     <section
       id="selected-work"
       className={[
-        "flex h-full w-full items-center",
-        "bg-[var(--color-bg)]",
-        "px-[clamp(24px,4vw,72px)]",
-        "py-[clamp(28px,5vh,64px)]",
-      ].join(" ")}
+  "flex h-full w-full items-start",
+  "bg-[var(--color-bg)]",
+  "px-[clamp(24px,4vw,72px)]",
+
+  "pt-[clamp(7.5rem,16svh,10.5rem)]",
+  "pb-8",
+
+  "[@media(max-width:390px)_and_(max-height:720px)]:pt-[5rem]",
+  "[@media(max-width:390px)_and_(max-height:720px)]:pb-3",
+
+  "[@media(min-width:768px)_and_(max-width:1023px)]:pt-[6rem]",
+  "[@media(min-width:768px)_and_(max-width:1023px)]:pb-4",
+  "[@media(min-width:540px)_and_(max-width:767px)_and_(max-height:720px)]:pt-[5.5rem]",
+"[@media(min-width:540px)_and_(max-width:767px)_and_(max-height:720px)]:pb-3",
+
+  "lg:items-center",
+  "lg:py-[clamp(28px,5vh,64px)]",
+  "[@media(min-width:900px)_and_(max-width:1100px)_and_(max-height:700px)]:!items-start",
+"[@media(min-width:900px)_and_(max-width:1100px)_and_(max-height:700px)]:!pt-[5.5rem]",
+"[@media(min-width:900px)_and_(max-width:1100px)_and_(max-height:700px)]:!pb-3",
+].join(" ")}
     >
       <div
         className={[
-          "mx-auto grid w-full max-w-[1800px]",
-          "grid-cols-1 gap-8",
-          "lg:grid-cols-[minmax(220px,0.65fr)_minmax(0,1.65fr)]",
-          "lg:gap-[clamp(48px,7vw,140px)]",
-        ].join(" ")}
+  "mx-auto grid w-full max-w-[1800px]",
+  "grid-cols-1 gap-6",
+  "[@media(min-width:540px)_and_(max-width:767px)_and_(max-height:720px)]:gap-4",
+
+  "lg:grid-cols-[minmax(220px,0.65fr)_minmax(0,1.65fr)]",
+  "lg:gap-[clamp(48px,7vw,140px)]",
+
+  "[@media(min-width:1024px)_and_(max-width:1180px)]:!grid-cols-1",
+  "[@media(min-width:1024px)_and_(max-width:1180px)]:!gap-6",
+  "[@media(min-width:900px)_and_(max-width:1100px)_and_(max-height:700px)]:!grid-cols-1",
+"[@media(min-width:900px)_and_(max-width:1100px)_and_(max-height:700px)]:!gap-3",
+].join(" ")}
       >
        <motion.div
   style={{
-    opacity: buttonOpacity,
-    y: buttonY,
-    scale: buttonScale,
-    filter: buttonBlur,
+    opacity: titleOpacity,
+    y: titleY,
+    scale: titleScale,
+    filter: titleBlur,
   }}
   className={[
-    "mt-[clamp(24px,4vh,60px)]",
-    "flex justify-center",
+    "text-left",
     "will-change-[transform,opacity,filter]",
+    "lg:pt-3",
+    "lg:text-right",
+    "[@media(min-width:1024px)_and_(max-width:1180px)]:!pt-0",
+"[@media(min-width:1024px)_and_(max-width:1180px)]:!text-left",
+"[@media(min-width:900px)_and_(max-width:1100px)_and_(max-height:700px)]:!pt-0",
+"[@media(min-width:900px)_and_(max-width:1100px)_and_(max-height:700px)]:!text-left",
   ].join(" ")}
 >
-          <h2
-            className={[
-              "inline-block text-right",
-              "whitespace-nowrap",
-              "text-[clamp(1.8rem,2.5vw,3.2rem)]",
-              "font-medium leading-[0.95]",
-              "tracking-[-0.04em]",
-              "text-[var(--color-text-secondary)]",
-            ].join(" ")}
-          >
-            Selected
-            <br />
-            Work.
-          </h2>
-        </motion.div>
+  <h2
+    className={[
+      "text-[1.8rem]",
+      "font-medium leading-[0.95]",
+      "tracking-[-0.04em]",
+      "text-[var(--color-text-secondary)]",
+
+      "lg:text-[clamp(2rem,4vw,4.5rem)]",
+      "lg:leading-[0.94]",
+      "lg:tracking-[-0.055em]",
+      "[@media(min-width:900px)_and_(max-width:1100px)_and_(max-height:700px)]:!text-[1.7rem]",
+"[@media(min-width:900px)_and_(max-width:1100px)_and_(max-height:700px)]:!leading-none",
+    ].join(" ")}
+  >
+    <span className="lg:hidden [@media(min-width:1024px)_and_(max-width:1180px)]:!inline">
+  Selected Work.
+</span>
+
+<span className="hidden lg:inline [@media(min-width:1024px)_and_(max-width:1180px)]:!hidden">
+  Selected
+  <br />
+  Work.
+</span>
+  </h2>
+</motion.div>
 
         <div className="w-full">
           <div
-            className={["grid grid-cols-2", "gap-[clamp(12px,2vw,32px)]"].join(
-              " ",
-            )}
+            className={[
+  "grid grid-cols-1",
+  "gap-4",
+
+  "[@media(max-width:390px)_and_(max-height:720px)]:gap-2.5",
+  "[@media(min-width:540px)_and_(max-width:767px)_and_(max-height:720px)]:gap-2.5",
+
+  "md:gap-3",
+
+  "lg:grid-cols-2",
+  "lg:gap-[clamp(12px,2vw,32px)]",
+  "[@media(min-width:900px)_and_(max-width:1100px)_and_(max-height:700px)]:!grid-cols-2",
+"[@media(min-width:900px)_and_(max-width:1100px)_and_(max-height:700px)]:!gap-1.5",
+].join(" ")}
             onMouseLeave={() => setActiveProjectIndex(null)}
           >
             {featuredProjects.map((project, index) => (
-              <AnimatedProject
-                key={project.slug}
-                index={index}
-                activeIndex={activeProjectIndex}
-                progress={progress}
-                shouldReduceMotion={shouldReduceMotion}
-                onActivate={() => setActiveProjectIndex(index)}
-                onDeactivate={() => setActiveProjectIndex(null)}
-              >
-                <ProjectCard project={project} />
-              </AnimatedProject>
-            ))}
+<div
+  key={project.slug}
+ className={[
+  "mx-auto w-full",
+
+  "[@media(max-width:390px)_and_(max-height:720px)]:max-w-[310px]",
+  "[@media(min-width:540px)_and_(max-width:767px)_and_(max-height:720px)]:max-w-[300px]",
+
+  "md:max-w-[560px]",
+  "[@media(min-width:768px)_and_(max-width:819px)]:max-w-[520px]",
+
+  "lg:max-w-none",
+
+  "[@media(min-width:1024px)_and_(max-width:1180px)]:!max-w-none",
+ "[@media(min-width:900px)_and_(max-width:1100px)_and_(max-height:700px)]:!max-w-[300px]",
+ "[@media(min-width:900px)_and_(max-width:1100px)_and_(max-height:700px)]:!mx-auto",
+
+  index === 2
+    ? "hidden lg:block"
+    : "",
+].join(" ")}
+>
+    <AnimatedProject
+      index={index}
+      activeIndex={activeProjectIndex}
+      progress={progress}
+      shouldReduceMotion={shouldReduceMotion}
+      onActivate={() => setActiveProjectIndex(index)}
+      onDeactivate={() => setActiveProjectIndex(null)}
+    >
+      <ProjectCard project={project} />
+    </AnimatedProject>
+  </div>
+))}
           </div>
 
           <motion.div
@@ -301,10 +372,18 @@ const buttonBlur = useTransform(
               opacity: buttonOpacity,
               y: buttonY,
             }}
-            className={[
-              "mt-[clamp(24px,4vh,60px)]",
-              "flex justify-center",
-            ].join(" ")}
+           className={[
+  "mt-[clamp(24px,4vh,60px)]",
+
+  "[@media(max-width:390px)_and_(max-height:720px)]:mt-3",
+  "[@media(min-width:540px)_and_(max-width:767px)_and_(max-height:720px)]:mt-3",
+  "[@media(min-width:768px)_and_(max-width:819px)]:mt-8",
+"[@media(min-width:820px)_and_(max-width:1023px)]:mt-8",
+"[@media(min-width:1024px)_and_(max-width:1180px)]:mt-10",
+"[@media(min-width:900px)_and_(max-width:1100px)_and_(max-height:700px)]:!mt-2",
+
+  "flex justify-center",
+].join(" ")}
           >
             <TransitionLink
               href="/work"
@@ -316,7 +395,18 @@ const buttonBlur = useTransform(
                 "border border-black/[0.10]",
                 "bg-white/[0.24]",
                 "px-6 py-3",
-                "text-sm font-normal leading-none",
+"text-sm font-normal leading-none",
+"[@media(min-width:900px)_and_(max-width:1100px)_and_(max-height:700px)]:!px-5",
+"[@media(min-width:900px)_and_(max-width:1100px)_and_(max-height:700px)]:!py-2.5",
+"[@media(min-width:900px)_and_(max-width:1100px)_and_(max-height:700px)]:!text-xs",
+"[@media(min-width:768px)_and_(max-width:1023px)]:px-8",
+"[@media(min-width:768px)_and_(max-width:1023px)]:py-3.5",
+"[@media(min-width:768px)_and_(max-width:1023px)]:text-base",
+
+
+"[@media(min-width:1024px)_and_(max-width:1180px)]:px-9",
+"[@media(min-width:1024px)_and_(max-width:1180px)]:py-4",
+"[@media(min-width:1024px)_and_(max-width:1180px)]:text-base",
                 "text-[var(--color-text)]",
 
                 "shadow-[inset_0_1px_0_rgba(255,255,255,0.82),0_8px_30px_rgba(17,17,17,0.04)]",

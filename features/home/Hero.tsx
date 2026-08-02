@@ -207,6 +207,16 @@ export default function Hero() {
           "bg-[var(--color-bg)]",
         ].join(" ")}
       >
+        <div
+  aria-hidden="true"
+  className={[
+    "pointer-events-none",
+    "absolute left-1/2 top-0",
+    "z-[999] h-full w-[2px]",
+    "-translate-x-1/2",
+    "bg-red-500",
+  ].join(" ")}
+/>
         {/* Video */}
         <motion.div
           aria-hidden="true"
@@ -257,6 +267,7 @@ export default function Hero() {
             "absolute inset-0 z-20",
             "flex items-center justify-center",
             "px-6",
+            "outline outline-1 outline-red-500",
           ].join(" ")}
         >
           <motion.div

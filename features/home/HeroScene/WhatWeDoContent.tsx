@@ -223,7 +223,7 @@ function ServiceRow({
             <span
               className={[
                 "relative z-10 block",
-                "text-[clamp(3rem,6vw,7rem)]",
+                "text-[clamp(3rem,7vw,8rem)]",
                 "font-medium leading-[0.94]",
                 "tracking-[-0.065em]",
                 "text-[var(--color-text)]",
@@ -260,7 +260,7 @@ function ServiceRow({
                   "pointer-events-none",
                   "absolute inset-0 z-20",
                   "block",
-                  "text-[clamp(3rem,6vw,7rem)]",
+                  "text-[clamp(3rem,7vw,8rem)]",
                   "font-medium leading-[0.94]",
                   "tracking-[-0.065em]",
                   "text-transparent",
@@ -356,11 +356,12 @@ export function WhatWeDoContent({
           : contentVisibility,
       }}
       className={[
-        "absolute inset-0 z-20",
-        "flex items-center",
-        "bg-[var(--color-bg)]",
-        "will-change-opacity",
-      ].join(" ")}
+  "absolute inset-0 z-20",
+  "flex items-start pt-[clamp(5rem,11svh,8rem)]",
+  "lg:items-center lg:pt-0",
+  "bg-[var(--color-bg)]",
+  "will-change-opacity",
+].join(" ")}
     >
       <motion.div
         style={
@@ -386,7 +387,7 @@ export function WhatWeDoContent({
           <div
             className={[
               "flex flex-col",
-              "gap-[clamp(10px,0.8vw,16px)]",
+              "gap-[clamp(12px,1vw,22px)]",
               "text-left lg:text-right",
             ].join(" ")}
             onMouseLeave={handleServiceLeave}

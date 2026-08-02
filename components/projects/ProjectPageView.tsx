@@ -370,7 +370,7 @@ export default function ProjectPageView({
        className={[
   "flex items-center",
   "px-[clamp(24px,3vw,56px)]",
-  "py-32",
+  "pt-16 pb-32",
   "md:py-44",
   "xl:py-56",
 ].join(" ")}

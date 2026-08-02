@@ -282,7 +282,11 @@ export default function Navbar({
     "border border-black/[0.07]",
     "bg-white/[0.32]",
     "px-4 py-2.5",
-    "text-sm font-normal leading-none",
+"text-sm font-normal leading-none",
+
+"[@media(max-width:430px)]:px-3",
+"[@media(max-width:430px)]:py-2.5",
+"[@media(max-width:430px)]:text-[0.78rem]",
     "text-black/[0.62]",
     "shadow-[inset_0_1px_0_rgba(255,255,255,0.94),inset_0_-1px_0_rgba(17,17,17,0.025),0_8px_28px_rgba(17,17,17,0.045)]",
     "backdrop-blur-[20px]",
@@ -348,12 +352,17 @@ export default function Navbar({
     "focus-visible:ring-1",
     "focus-visible:ring-black/20",
 
-    isHome
-      ? [
-          "border border-black/[0.10]",
-          "bg-white/[0.24]",
-          "px-5 py-2.5",
-          "text-[var(--color-text)]",
+   isHome
+  ? [
+      "border border-black/[0.10]",
+      "bg-white/[0.24]",
+      "px-5 py-2.5",
+
+      "[@media(max-width:430px)]:px-3",
+      "[@media(max-width:430px)]:py-2.5",
+      "[@media(max-width:430px)]:text-[0.78rem]",
+
+      "text-[var(--color-text)]",
           "shadow-[inset_0_1px_0_rgba(255,255,255,0.82),0_8px_30px_rgba(17,17,17,0.04)]",
           "backdrop-blur-xl",
           "hover:scale-[1.035]",
@@ -445,13 +454,16 @@ export default function Navbar({
   );
 
   const navigationGroupClassName = [
-    "flex items-center justify-end",
-    isHome ? "gap-2" : "gap-0.5",
-  ].join(" ");
+  "flex items-center justify-end",
+  isHome
+    ? "gap-2 [@media(max-width:430px)]:gap-1"
+    : "gap-0.5",
+].join(" ");
 
   const navigationBarClassName = [
     "relative flex items-center",
     "px-[clamp(24px,4vw,72px)]",
+"[@media(max-width:430px)]:px-5",
     "py-[clamp(14px,1.35vw,20px)]",
     "will-change-[opacity,filter]",
   ]
@@ -527,9 +539,9 @@ export default function Navbar({
       />
 
       <span
-        className={[
-          "relative z-10",
-          "transition-colors",
+  className={[
+    "relative z-10 whitespace-nowrap",
+    "transition-colors",
           "duration-700",
           "group-hover:text-white",
           "group-focus-visible:text-white",

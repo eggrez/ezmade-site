@@ -6,6 +6,7 @@ import {
   useReducedMotion,
 } from "framer-motion";
 import {
+  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -35,6 +36,7 @@ type WorkFilter = {
 
 type FilterMotion = {
   x: number;
+  y: number;
   scale: number;
   opacity: number;
 };
@@ -153,10 +155,12 @@ function shuffleProjects(
 function getFilterMotion(
   index: number,
   hoveredIndex: number | null,
+  isMobile: boolean,
 ): FilterMotion {
   if (hoveredIndex === null) {
     return {
       x: 0,
+      y: 0,
       scale: 1,
       opacity: 1,
     };
@@ -165,22 +169,39 @@ function getFilterMotion(
   if (index === hoveredIndex) {
     return {
       x: 0,
-      scale: 1.075,
+      y: 0,
+      scale: 1.06,
       opacity: 1,
     };
   }
 
-  const distance =
-    Math.abs(
-      index - hoveredIndex,
-    );
+  const distance = Math.abs(
+    index - hoveredIndex,
+  );
 
   const direction =
-    index < hoveredIndex
-      ? -1
-      : 1;
+    index < hoveredIndex ? -1 : 1;
 
-  const baseOffset =
+  if (isMobile) {
+    const verticalOffset =
+      distance === 1
+        ? 7
+        : distance === 2
+          ? 11
+          : 14;
+
+    return {
+      x: 0,
+      y: direction * verticalOffset,
+      scale: 1,
+      opacity:
+        distance === 1
+          ? 0.78
+          : 0.58,
+    };
+  }
+
+  const horizontalOffset =
     distance === 1
       ? 12
       : distance === 2
@@ -188,9 +209,8 @@ function getFilterMotion(
         : 3;
 
   return {
-    x:
-      direction *
-      baseOffset,
+    x: direction * horizontalOffset,
+    y: 0,
     scale: 1,
     opacity:
       distance === 1
@@ -204,6 +224,31 @@ export default function WorkPortfolio({
 }: WorkPortfolioProps) {
   const shouldReduceMotion =
     useReducedMotion();
+
+    const [isMobile, setIsMobile] =
+  useState(false);
+
+useEffect(() => {
+  const mediaQuery = window.matchMedia(
+    "(max-width: 767px)",
+  );
+
+  const update = () =>
+    setIsMobile(mediaQuery.matches);
+
+  update();
+
+  mediaQuery.addEventListener(
+    "change",
+    update,
+  );
+
+  return () =>
+    mediaQuery.removeEventListener(
+      "change",
+      update,
+    );
+}, []);
 
   const [
     activeFilter,
@@ -327,8 +372,8 @@ export default function WorkPortfolio({
       <section
         className={[
           "px-[clamp(24px,3vw,56px)]",
-          "pb-20 pt-36",
-          "sm:pb-24 sm:pt-40",
+          "pb-14 pt-32",
+          "sm:pb-20 sm:pt-36",
           "md:pb-28 md:pt-48",
           "xl:pb-36 xl:pt-56",
         ].join(" ")}
@@ -368,12 +413,18 @@ export default function WorkPortfolio({
             }}
             className={[
               "mx-auto",
-              "max-w-[1800px]",
+              "max-w-[12ch]",
               "text-center",
-              "text-[clamp(3.5rem,8vw,10rem)]",
-              "font-medium leading-[0.86]",
-              "tracking-[-0.078em]",
+              "text-[clamp(2.9rem,13vw,4.25rem)]",
+              "font-medium leading-[0.9]",
+              "tracking-[-0.065em]",
               "text-[var(--color-text)]",
+              "sm:max-w-[13ch]",
+              "sm:text-[clamp(3.5rem,10vw,6rem)]",
+              "md:max-w-[1800px]",
+              "md:text-[clamp(3.5rem,8vw,10rem)]",
+              "md:leading-[0.86]",
+              "md:tracking-[-0.078em]",
             ].join(" ")}
           >
             What are you looking for?
@@ -412,16 +463,18 @@ export default function WorkPortfolio({
                   : 0.18,
               ease,
             }}
-            className="mt-[clamp(56px,7vw,104px)]"
+            className="mt-8 sm:mt-10 md:mt-[clamp(56px,7vw,104px)]"
           >
             <div
               className={[
-                "-mx-[clamp(24px,3vw,56px)]",
-                "overflow-x-auto",
-                "px-[clamp(24px,3vw,56px)]",
-                "pb-4",
-                "[scrollbar-width:none]",
-                "[&::-webkit-scrollbar]:hidden",
+                "w-full",
+                "md:-mx-[clamp(24px,3vw,56px)]",
+                "md:w-auto",
+                "md:overflow-x-auto",
+                "md:px-[clamp(24px,3vw,56px)]",
+                "md:pb-4",
+                "md:[scrollbar-width:none]",
+                "md:[&::-webkit-scrollbar]:hidden",
               ].join(" ")}
             >
               <div
@@ -433,13 +486,15 @@ export default function WorkPortfolio({
                   );
                 }}
                 className={[
-                  "mx-auto flex min-w-max",
-                  "items-center justify-center",
-                  "gap-7",
-                  "sm:gap-9",
-                  "md:gap-11",
-                  "xl:gap-14",
-                ].join(" ")}
+  "mx-auto flex w-full flex-col",
+  "items-center gap-2",
+
+  "md:flex-row",
+  "md:min-w-max md:w-auto",
+  "md:justify-center md:gap-11",
+
+  "xl:gap-14",
+].join(" ")}
               >
                 {filters.map(
                   (
@@ -451,10 +506,11 @@ export default function WorkPortfolio({
                       filter.id;
 
                     const filterMotion =
-                      getFilterMotion(
-                        index,
-                        hoveredFilterIndex,
-                      );
+  getFilterMotion(
+    index,
+    hoveredFilterIndex,
+    isMobile,
+  );
 
                     return (
                       <motion.button
@@ -535,17 +591,20 @@ export default function WorkPortfolio({
                           shouldReduceMotion
                             ? {
                                 x: 0,
+                                y: 0,
                                 scale: 1,
                                 opacity: 1,
                               }
-                            : {
-                                x:
-                                  filterMotion.x,
-                                scale:
-                                  filterMotion.scale,
-                                opacity:
-                                  filterMotion.opacity,
-                              }
+                           : {
+    x:
+      filterMotion.x,
+    y:
+      filterMotion.y,
+    scale:
+      filterMotion.scale,
+    opacity:
+      filterMotion.opacity,
+  }
                         }
                         transition={{
                           duration:
@@ -557,12 +616,13 @@ export default function WorkPortfolio({
                         className={[
                           "group/filter relative isolate",
                           "overflow-hidden",
-                          "py-2",
+                          "w-auto py-1.5 text-center",
                           "text-[15px]",
-                          "font-normal leading-none",
+                          "font-normal leading-[1.1]",
                           "tracking-[-0.025em]",
                           "sm:text-base",
-                          "md:text-[17px]",
+                          "md:w-auto md:text-center md:text-[17px]",
+                          "md:leading-none",
 
                           "transition-colors",
                           "duration-700",
@@ -764,7 +824,8 @@ export default function WorkPortfolio({
               }
               className={[
                 "grid grid-cols-1",
-                "gap-x-8 gap-y-14",
+                "gap-x-8 gap-y-8",
+                "sm:gap-y-10",
                 "md:grid-cols-2",
                 "md:gap-x-8 md:gap-y-20",
                 "xl:gap-x-10 xl:gap-y-28",

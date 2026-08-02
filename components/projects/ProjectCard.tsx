@@ -170,7 +170,8 @@ export default function ProjectCard({
           ease,
         }}
         className={[
-          "relative aspect-[16/10]",
+          "relative aspect-[16/7]",
+"lg:aspect-[16/10]",
           "overflow-hidden rounded-sm",
           "bg-neutral-200",
 
@@ -662,8 +663,8 @@ function ProjectCardInformation({
       <motion.div
         className={[
           "pointer-events-none",
-          "absolute inset-x-5 bottom-7",
-          "md:inset-x-6 md:bottom-9",
+          "absolute inset-x-4 bottom-4",
+"lg:inset-x-6 lg:bottom-9",
         ].join(" ")}
         variants={{
           rest: {
@@ -720,7 +721,8 @@ function ProjectCardInformation({
             ease,
           }}
           className={[
-            "mt-3",
+           "mt-2",
+"lg:mt-3",
             "text-[12px]",
             "leading-[1.4]",
             "tracking-[-0.01em]",

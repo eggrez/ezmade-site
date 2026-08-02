@@ -88,7 +88,7 @@ export default function SplitSection({
     >
       <WideContainer>
         <div
-          className={`grid gap-12 ${layoutClasses[layout]}`}
+          className={`grid gap-8 lg:gap-12 ${layoutClasses[layout]}`}
         >
           {/* Left side */}
           <motion.div
@@ -133,7 +133,19 @@ export default function SplitSection({
             }}
             className="lg:pt-4 lg:text-right"
           >
-            <h2 className="text-[clamp(1.8rem,2.5vw,3.2rem)] font-medium leading-[0.95] tracking-[-0.04em] text-[var(--color-text-secondary)]">
+            <h2
+  className={[
+    "text-[1.8rem]",
+    "font-medium leading-[0.95]",
+    "tracking-[-0.04em]",
+    "text-[var(--color-text-secondary)]",
+
+    "md:text-[2.6rem]",
+    "lg:text-[clamp(1.8rem,2.5vw,3.2rem)]",
+
+    "[@media(min-width:768px)_and_(max-width:1180px)]:!text-[2.6rem]",
+  ].join(" ")}
+>
               {title}
             </h2>
           </motion.div>
@@ -182,7 +194,11 @@ export default function SplitSection({
                 : 0,
               ease,
             }}
-            className={`min-w-0 ${contentClassName}`}
+            className={[
+  "min-w-0",
+  "[@media(min-width:1024px)_and_(max-width:1180px)]:pr-1",
+  contentClassName,
+].join(" ")}
           >
             {children}
           </motion.div>

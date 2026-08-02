@@ -45,7 +45,9 @@ const socialLinks = [
 const fieldClass = [
   "w-full border-0 border-b",
   "border-black/[0.18]",
-  "bg-transparent px-0 pb-3 pt-2",
+  "bg-transparent px-0 pb-2 pt-1",
+  "[@media(max-height:720px)]:pb-1",
+  "[@media(max-height:720px)]:pt-0",
   "text-[clamp(1rem,1.25vw,1.3rem)]",
   "leading-[1.45] tracking-[-0.025em]",
   "text-[var(--color-text)]",
@@ -54,7 +56,7 @@ const fieldClass = [
   "ease-[cubic-bezier(0.22,1,0.36,1)]",
   "placeholder:text-[var(--color-text-secondary)]/45",
   "focus:border-black/70",
-  "md:pb-4",
+  "md:pb-3",
 ].join(" ");
 
 
@@ -62,6 +64,8 @@ const textareaClass = [
   "block w-full resize-none overflow-hidden",
   "border-0 border-b border-black/[0.18]",
   "bg-transparent px-0 pb-3 pt-2",
+  "[@media(max-height:720px)]:pb-2",
+"[@media(max-height:720px)]:pt-1",
   "text-[clamp(1rem,1.25vw,1.3rem)]",
   "leading-[1.55] tracking-[-0.025em]",
   "text-[var(--color-text)]",
@@ -83,7 +87,16 @@ const socialLinkClass = [
   "backdrop-blur-[18px] backdrop-saturate-150",
   "shadow-[inset_0_1px_0_rgba(255,255,255,0.9),inset_0_-1px_0_rgba(0,0,0,0.05),0_8px_24px_rgba(0,0,0,0.06)]",
   "px-4 py-2",
-  "text-[0.78rem]",
+"text-[0.78rem]",
+"[@media(min-width:1024px)_and_(max-width:1100px)_and_(min-height:900px)]:px-5",
+"[@media(min-width:1024px)_and_(max-width:1100px)_and_(min-height:900px)]:py-2.5",
+"[@media(min-width:1024px)_and_(max-width:1100px)_and_(min-height:900px)]:text-[0.9rem]",
+"[@media(max-height:720px)]:px-3",
+"[@media(max-height:720px)]:py-[7px]",
+"[@media(max-height:720px)]:text-[0.7rem]",
+"[@media(min-width:381px)_and_(max-width:430px)]:px-3",
+"[@media(min-width:381px)_and_(max-width:430px)]:py-[7px]",
+"[@media(min-width:381px)_and_(max-width:430px)]:text-[0.7rem]",
   "leading-none",
   "tracking-[-0.015em]",
   "text-[var(--color-text-secondary)]",
@@ -110,8 +123,12 @@ export default function ContactContent({
 
 
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [activeSocialIndex, setActiveSocialIndex] =
-    useState<number | null>(null);
+const [isSending, setIsSending] = useState(false);
+const [submitError, setSubmitError] = useState("");
+
+
+const [activeSocialIndex, setActiveSocialIndex] =
+  useState<number | null>(null);
 
 
   /*
@@ -178,41 +195,54 @@ export default function ContactContent({
   }
 
 
-  function handleSubmit(
-    event: FormEvent<HTMLFormElement>,
-  ) {
-    event.preventDefault();
+  async function handleSubmit(
+  event: FormEvent<HTMLFormElement>,
+) {
+  event.preventDefault();
 
+  const form = event.currentTarget;
+  const formData = new FormData(form);
 
-    const formData = new FormData(event.currentTarget);
+  const name = String(formData.get("name") ?? "").trim();
+  const email = String(formData.get("email") ?? "").trim();
+  const project = String(formData.get("project") ?? "").trim();
 
+  setIsSending(true);
+  setSubmitError("");
 
-   const name = String(formData.get("name") ?? "");
-const email = String(formData.get("email") ?? "");
-const project = String(formData.get("project") ?? "");
+  try {
+    const response = await fetch("/api/contact", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name,
+        email,
+        project,
+      }),
+    });
 
-    const subject = encodeURIComponent(
-      `New project enquiry from ${name}`,
-    );
+    const result = await response.json();
 
+    if (!response.ok) {
+      throw new Error(
+        result.error || "Failed to send message.",
+      );
+    }
 
-   const body = encodeURIComponent(
-  [
-    `Name: ${name}`,
-    `Email: ${email}`,
-    "",
-    "Project:",
-    project,
-  ].join("\n"),
-);
-
-
+    form.reset();
     setIsSubmitted(true);
-
-
-    window.location.href =
-  `mailto:eggrezgrigorev@gmail.com?subject=${subject}&body=${body}`;
+  } catch (error) {
+    setSubmitError(
+      error instanceof Error
+        ? error.message
+        : "Something went wrong. Please try again.",
+    );
+  } finally {
+    setIsSending(false);
   }
+}
   function getSocialOffset(index: number) {
     if (
       shouldReduceMotion ||
@@ -235,15 +265,30 @@ const project = String(formData.get("project") ?? "");
         "overflow-hidden",
         "bg-[var(--color-bg)]",
         "px-[clamp(24px,4vw,72px)]",
-        "py-[clamp(32px,4vw,72px)]",
+        "pt-24",
+"pb-4",
+
+"[@media(max-width:380px)_and_(max-height:700px)]:pt-[5rem]",
+"[@media(max-width:380px)_and_(max-height:700px)]:pb-6",
+
+"lg:py-[clamp(32px,4vw,72px)]",
       ].join(" ")}
     >
       <div
         className={[
-          "mx-auto grid h-full w-full max-w-[2200px]",
-          "grid-cols-1 gap-16",
+          "mx-auto grid w-full max-w-[2200px] content-start",
+"lg:h-full lg:content-stretch",
+          "grid-cols-1 gap-8",
           "lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]",
-          "lg:gap-[clamp(80px,9vw,220px)]",
+"[@media(min-width:900px)_and_(max-width:1100px)]:grid-cols-1",
+
+"lg:gap-[clamp(80px,9vw,220px)]",
+"[@media(min-width:900px)_and_(max-width:1100px)]:gap-6",
+
+"[@media(min-width:900px)_and_(max-width:1100px)_and_(max-height:700px)]:h-full",
+"[@media(min-width:900px)_and_(max-width:1100px)_and_(max-height:700px)]:!grid-cols-[0.85fr_1.15fr]",
+"[@media(min-width:900px)_and_(max-width:1100px)_and_(max-height:700px)]:content-center",
+"[@media(min-width:900px)_and_(max-width:1100px)_and_(max-height:700px)]:!gap-12",
           "xl:gap-[clamp(120px,10vw,240px)]",
         ].join(" ")}
       >
@@ -251,7 +296,7 @@ const project = String(formData.get("project") ?? "");
 
 
         <div className="flex min-w-0 flex-col">
-          <div className="flex flex-1 items-center">
+          <div className="flex flex-none items-start lg:flex-1 lg:items-center">
             <motion.h2
               style={{
                 opacity: shouldReduceMotion
@@ -261,13 +306,19 @@ const project = String(formData.get("project") ?? "");
               }}
               className={[
                 "max-w-[900px]",
-                "text-[clamp(4rem,16vw,9rem)]",
+                "text-[3.1rem]",
+"[@media(max-height:720px)]:text-[2.45rem]",
                 "font-medium",
                 "leading-[0.88]",
                 "tracking-[-0.075em]",
                 "text-[var(--color-text)]",
                 "sm:text-[clamp(5rem,13vw,9rem)]",
+                "[@media(min-width:700px)_and_(max-width:900px)]:text-[5rem]",
                 "lg:text-[clamp(5rem,8vw,9rem)]",
+                "[@media(min-width:900px)_and_(max-width:1100px)_and_(max-height:700px)]:!text-[3.8rem]",
+"[@media(min-width:900px)_and_(max-width:1100px)_and_(max-height:700px)]:!leading-[0.88]",
+                "[@media(min-width:1024px)_and_(max-width:1100px)_and_(min-height:900px)]:!text-[6.2rem]",
+                "[@media(min-width:1024px)_and_(max-width:1100px)_and_(min-height:900px)]:!leading-[0.9]",
               ].join(" ")}
             >
               Let&apos;s make
@@ -288,27 +339,39 @@ const project = String(formData.get("project") ?? "");
                 ? 0
                 : contactDetailsY,
             }}
-            className="shrink-0 pt-8"
+          className={[
+  "shrink-0 pt-8",
+
+  "[@media(max-width:380px)_and_(max-height:700px)]:pt-5",
+
+  "[@media(min-width:700px)_and_(max-width:900px)]:pt-5",
+
+  "[@media(min-width:1024px)_and_(max-width:1100px)_and_(min-height:900px)]:pt-4",
+
+  "[@media(min-width:900px)_and_(max-width:1100px)_and_(max-height:700px)]:!pt-5",
+].join(" ")}
           >
             <a
               href="mailto:eggrezgrigorev@gmail.com"
               className={[
                 "inline-block max-w-full break-words",
-                "text-[clamp(1.25rem,5.8vw,2.5rem)]",
+                "text-[1.08rem]",
+"min-[390px]:text-[1.25rem]",
                 "tracking-[-0.045em]",
                 "text-[var(--color-text)]",
                 "transition-opacity duration-700",
                 "ease-[cubic-bezier(0.22,1,0.36,1)]",
                 "hover:opacity-45",
                 "sm:text-[clamp(1.5rem,4vw,2.5rem)]",
-                "lg:text-[clamp(1.35rem,2.2vw,2.5rem)]",
+                "[@media(min-width:900px)_and_(max-width:1100px)_and_(max-height:700px)]:!text-[1.15rem]",
+                "[@media(min-width:1024px)_and_(max-width:1100px)_and_(min-height:900px)]:!text-[1.7rem]",
               ].join(" ")}
             >
               eggrezgrigorev@gmail.com
             </a>
 
 
-            <div className="mt-7 flex flex-wrap items-center gap-2">
+            <div className="mt-7 flex flex-wrap items-center gap-2 [@media(max-height:720px)]:mt-5 [@media(max-height:720px)]:flex-nowrap [@media(max-height:720px)]:gap-1 [@media(max-width:380px)_and_(max-height:700px)]:!mt-3 [@media(min-width:381px)_and_(max-width:430px)]:!mt-5 [@media(min-width:381px)_and_(max-width:430px)]:flex-nowrap [@media(min-width:381px)_and_(max-width:430px)]:gap-1 [@media(min-width:900px)_and_(max-width:1100px)_and_(max-height:700px)]:!mt-5">
               {socialLinks.map((social, index) => (
                 <motion.a
                   key={social.title}
@@ -363,9 +426,11 @@ const project = String(formData.get("project") ?? "");
 
         <div
           className={[
-            "flex min-w-0 flex-col justify-center",
-            "lg:pt-[clamp(48px,7vh,88px)]",
-          ].join(" ")}
+  "flex min-w-0 flex-col justify-center",
+  "lg:pt-[clamp(48px,7vh,88px)]",
+
+  "[@media(min-width:900px)_and_(max-width:1100px)_and_(max-height:700px)]:!pt-0",
+].join(" ")}
         >
           <motion.div
             style={{
@@ -402,17 +467,38 @@ const project = String(formData.get("project") ?? "");
                   }}
                   className="min-w-0"
                 >
-                  <div className="mb-16 sm:mb-20 md:mb-24">
+                <div
+ className={[
+  "mt-3 mb-4",
+
+  "[@media(max-width:380px)_and_(max-height:700px)]:!mt-2",
+  "[@media(max-width:380px)_and_(max-height:700px)]:!mb-2",
+
+  "min-[390px]:mt-6",
+  "min-[390px]:mb-8",
+
+  "sm:mt-0 sm:mb-16",
+  "md:mb-24",
+
+  "[@media(min-width:700px)_and_(max-width:900px)]:!mb-10",
+
+  "[@media(max-height:720px)]:mt-3",
+  "[@media(max-height:720px)]:mb-4",
+].join(" ")}
+>
                     <p
                       className={[
                         "-ml-[0.025em]",
-                        "text-[clamp(2.3rem,10vw,4rem)]",
+                        "text-[2rem]",
+"leading-[0.96]",
+"min-[390px]:text-[2.3rem]",
                         "font-medium",
-                        "leading-[0.98]",
+                     
                         "tracking-[-0.06em]",
                         "text-[var(--color-text)]",
                         "sm:text-[clamp(3rem,7vw,4.5rem)]",
                         "lg:text-[clamp(2.7rem,3.6vw,4.5rem)]",
+                        "[@media(min-width:900px)_and_(max-width:1100px)_and_(max-height:700px)]:!text-[2rem]",
                       ].join(" ")}
                     >
                       What are we making?
@@ -444,7 +530,7 @@ const project = String(formData.get("project") ?? "");
                     </div>
 
 
-                    <div className="mt-10 sm:mt-12">
+                    <div className="mt-5 [@media(max-width:380px)_and_(max-height:700px)]:mt-3 sm:mt-10 [@media(min-width:700px)_and_(max-width:900px)]:!mt-7 [@media(min-width:900px)_and_(max-width:1100px)_and_(max-height:700px)]:!mt-4">
   <div>
     <label
       htmlFor="email"
@@ -465,7 +551,7 @@ const project = String(formData.get("project") ?? "");
 </div>
 
 
-                    <div className="mt-10 sm:mt-12">
+                    <div className="mt-7 [@media(max-width:380px)_and_(max-height:700px)]:mt-4 sm:mt-12 [@media(min-width:700px)_and_(max-width:900px)]:!mt-8 [@media(min-width:900px)_and_(max-width:1100px)_and_(max-height:700px)]:!mt-5">
                       <label
                         htmlFor="project"
                         className="sr-only"
@@ -487,30 +573,56 @@ const project = String(formData.get("project") ?? "");
 
 
                     <div
-                      className={[
-                        "mt-12 flex flex-col gap-8",
-                        "sm:mt-14",
-                        "md:flex-row",
-                        "md:items-center",
-                        "md:justify-between",
-                      ].join(" ")}
-                    >
+  className={[
+  "mt-5 flex flex-col gap-3",
+
+  "[@media(max-width:380px)_and_(max-height:700px)]:!mt-2",
+  "[@media(max-width:380px)_and_(max-height:700px)]:!gap-1.5",
+  "[@media(min-width:381px)_and_(max-width:430px)]:!mt-4",
+"[@media(min-width:381px)_and_(max-width:430px)]:!gap-2",
+
+  "[@media(min-width:500px)_and_(max-width:600px)]:mt-2",
+  "[@media(max-height:720px)]:mt-4",
+  "min-[390px]:mt-7",
+
+  "sm:mt-14",
+  "[@media(min-width:900px)_and_(max-width:1100px)_and_(max-height:700px)]:!mt-5",
+"[@media(min-width:900px)_and_(max-width:1100px)_and_(max-height:700px)]:!gap-2",
+  "[@media(min-width:700px)_and_(max-width:900px)]:!mt-8",
+  "md:flex-row",
+  "md:items-center",
+  "md:justify-between",
+].join(" ")}
+>
                       <p className="max-w-[440px] text-[13px] leading-[1.55] text-[var(--color-text-secondary)] sm:text-sm">
   We&apos;ll only use your email to reply to your message.
 </p>
 
 
                       <GlassButton
-                        type="submit"
-                        variant="primary"
-                        size="large"
-                        fullWidth
-                        className="sm:w-auto"
-                      >
-                        Send
-                      </GlassButton>
+  type="submit"
+  variant="primary"
+  size="large"
+  fullWidth
+  disabled={isSending}
+  className={[
+    "sm:w-auto",
+    "[@media(max-width:380px)_and_(max-height:700px)]:!min-h-[42px]",
+    "[@media(max-width:380px)_and_(max-height:700px)]:!py-2.5",
+  ].join(" ")}
+>
+  {isSending ? "Sending..." : "Send"}
+</GlassButton>
                     </div>
                   </form>
+                  {submitError && (
+  <p
+    role="alert"
+    className="mt-4 text-sm text-red-500"
+  >
+    {submitError}
+  </p>
+)}
                 </motion.div>
               ) : (
                 <motion.div
