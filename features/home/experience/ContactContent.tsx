@@ -206,6 +206,9 @@ const [activeSocialIndex, setActiveSocialIndex] =
   const name = String(formData.get("name") ?? "").trim();
   const email = String(formData.get("email") ?? "").trim();
   const project = String(formData.get("project") ?? "").trim();
+  const companyFax = String(
+  formData.get("companyFax") ?? "",
+).trim();
 
   setIsSending(true);
   setSubmitError("");
@@ -220,6 +223,7 @@ const [activeSocialIndex, setActiveSocialIndex] =
         name,
         email,
         project,
+        companyFax,
       }),
     });
 
@@ -510,6 +514,14 @@ const [activeSocialIndex, setActiveSocialIndex] =
                     onSubmit={handleSubmit}
                     className="w-full min-w-0"
                   >
+                    <input
+  name="companyFax"
+  type="text"
+  tabIndex={-1}
+  autoComplete="off"
+  aria-hidden="true"
+  className="pointer-events-none absolute -left-[9999px] h-px w-px opacity-0"
+/>
                     <div>
                       <label
                         htmlFor="name"
@@ -520,13 +532,14 @@ const [activeSocialIndex, setActiveSocialIndex] =
 
 
                       <input
-                        id="name"
-                        name="name"
-                        type="text"
-                        autoComplete="name"
-                        required
-                        className={fieldClass}
-                      />
+  id="name"
+  name="name"
+  type="text"
+  autoComplete="name"
+  maxLength={100}
+  required
+  className={fieldClass}
+/>
                     </div>
 
 
@@ -540,13 +553,14 @@ const [activeSocialIndex, setActiveSocialIndex] =
     </label>
 
     <input
-      id="email"
-      name="email"
-      type="email"
-      autoComplete="email"
-      required
-      className={fieldClass}
-    />
+  id="email"
+  name="email"
+  type="email"
+  autoComplete="email"
+  maxLength={320}
+  required
+  className={fieldClass}
+/>
   </div>
 </div>
 
@@ -560,15 +574,16 @@ const [activeSocialIndex, setActiveSocialIndex] =
                       </label>
 
 
-                      <textarea
-                        id="project"
-                        name="project"
-                        rows={1}
-                        required
-                        placeholder="Tell us about your project"
-                        onInput={handleTextareaInput}
-                        className={textareaClass}
-                      />
+                     <textarea
+  id="project"
+  name="project"
+  rows={1}
+  maxLength={5000}
+  required
+  placeholder="Tell us about your project"
+  onInput={handleTextareaInput}
+  className={textareaClass}
+/>
                     </div>
 
 
