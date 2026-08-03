@@ -64,8 +64,7 @@ type OverlayState = {
   mode: OverlayMode;
   phase: OverlayPhase;
 
-  mobileLight: boolean;
-sourceDissolved: boolean;
+ mobileLight: boolean;
 
   slug: string;
   image: string;
@@ -122,8 +121,7 @@ const MOBILE_FORWARD_ROUTE_DURATION =
 const MOBILE_FORWARD_EXIT_DURATION =
   1850;
 
-  const MOBILE_SOURCE_DISSOLVE_DURATION =
-  1100;
+  
 
 const REVERSE_COVER_DURATION =
   900;
@@ -240,10 +238,7 @@ export default function ProjectTransitionProvider({
       null,
     );
 
-    const sourceDissolveTimerRef =
-  useRef<ReturnType<typeof setTimeout> | null>(
-    null,
-  );
+    
 
   const frameRef =
     useRef<number | null>(
@@ -326,16 +321,7 @@ export default function ProjectTransitionProvider({
         routeWaitTimerRef.current =
           null;
       }
-      if (
-  sourceDissolveTimerRef.current
-) {
-  clearTimeout(
-    sourceDissolveTimerRef.current,
-  );
-
-  sourceDissolveTimerRef.current =
-    null;
-}
+      
 
 
 
@@ -446,7 +432,6 @@ export default function ProjectTransitionProvider({
               "forward-expanding",
 
            mobileLight,
-sourceDissolved: false,
 
 slug,
             image,
@@ -496,11 +481,7 @@ slug,
 
         const next = {
           ...current,
-          sourceDissolved: true,
-          expanded:
-            current.mobileLight
-              ? current.expanded
-              : true,
+          expanded: true,
         };
 
         overlayRef.current =
@@ -509,33 +490,6 @@ slug,
         return next;
       },
     );
-
-    if (mobileLight) {
-      sourceDissolveTimerRef.current =
-        setTimeout(() => {
-          setOverlay(
-            (current) => {
-              if (
-                !current ||
-                current.mode !==
-                  "forward"
-              ) {
-                return current;
-              }
-
-              const next = {
-                ...current,
-                expanded: true,
-              };
-
-              overlayRef.current =
-                next;
-
-              return next;
-            },
-          );
-        }, MOBILE_SOURCE_DISSOLVE_DURATION);
-    }
   });
 
         routeTimerRef.current =
@@ -547,8 +501,7 @@ slug,
               },
             );
       }, mobileLight
-  ? MOBILE_SOURCE_DISSOLVE_DURATION +
-    MOBILE_FORWARD_ROUTE_DURATION
+  ? MOBILE_FORWARD_ROUTE_DURATION
   : FORWARD_EXPAND_DURATION);
       },
       [
@@ -614,7 +567,6 @@ slug,
               "reverse-covering",
 
             mobileLight: false,
-sourceDissolved: false,
 
 slug:
               transitionSlug,
@@ -1002,61 +954,26 @@ slug:
                   "md:hidden",
                 ].join(" ")}
                 style={{
-                  height:
-                    "calc(100dvh + 2px)",
-
-                  WebkitBackdropFilter:
-  overlay.sourceDissolved &&
-  overlay.phase !==
-    "forward-leaving"
-    ? "blur(18px)"
-    : "blur(0px)",
-
-backdropFilter:
-  overlay.sourceDissolved &&
-  overlay.phase !==
-    "forward-leaving"
-    ? "blur(18px)"
-    : "blur(0px)",
-
-transition: [
-  `backdrop-filter ${
-    overlay.phase ===
-    "forward-leaving"
-      ? 1650
-      : MOBILE_SOURCE_DISSOLVE_DURATION
-  }ms cubic-bezier(0.37,0,0.63,1)`,
-
-  `-webkit-backdrop-filter ${
-    overlay.phase ===
-    "forward-leaving"
-      ? 1650
-      : MOBILE_SOURCE_DISSOLVE_DURATION
-  }ms cubic-bezier(0.37,0,0.63,1)`,
-].join(", "),
-                }}
+  height:
+    "calc(100dvh + 2px)",
+}}
               >
                 {/* Светлый фон */}
                 <div
                   className="absolute inset-0 bg-[var(--color-bg)]"
-                  style={{
-                    opacity:
-  overlay.expanded &&
-  overlay.visible
-    ? 1
-    : overlay.sourceDissolved &&
-        overlay.visible
-      ? 0.26
+                 style={{
+  opacity:
+    overlay.expanded &&
+    overlay.visible
+      ? 1
       : 0,
 
-transition:
-  overlay.phase ===
-  "forward-leaving"
-    ? "opacity 1450ms 260ms cubic-bezier(0.37,0,0.63,1)"
-    : overlay.expanded
-      ? "opacity 720ms cubic-bezier(0.22,1,0.36,1)"
-      : `opacity ${MOBILE_SOURCE_DISSOLVE_DURATION}ms cubic-bezier(0.37,0,0.63,1)`,
-                  }}
+  transition:
+    overlay.phase ===
+    "forward-leaving"
+      ? "opacity 1450ms 260ms cubic-bezier(0.37,0,0.63,1)"
+      : "none",
+}}
                 />
 
                 {/* Стабильная область знака */}
