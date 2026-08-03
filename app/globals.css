@@ -666,3 +666,14 @@ body {
     }
   }
 }
+/*
+ * На мобильном Safari нижняя панель изменяет высоту окна.
+ * Квадрат мягко следует за изменением высоты, не затрагивая десктоп.
+ */
+@media (max-width: 767px) and (orientation: portrait) {
+  .ez-hero-intro-mark-viewport {
+    bottom: auto;
+    height: calc(100dvh + 2px);
+    transition: height 900ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+}

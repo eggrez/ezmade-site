@@ -321,6 +321,7 @@ export default function HeroContent({
       <div
         className={[
           "pointer-events-none",
+           "ez-hero-intro-mark-viewport",
           "absolute inset-0 z-20",
           "flex items-center justify-center",
           "px-6",
