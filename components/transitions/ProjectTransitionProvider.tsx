@@ -912,18 +912,133 @@ export default function ProjectTransitionProvider({
   const overlayElement =
     isMounted && overlay
       ? createPortal(
+    <>
+      {overlay.mode ===
+        "forward" && (
+        <div
+          aria-hidden="true"
+          className={[
+            "pointer-events-auto fixed left-0 top-0",
+            "z-[2147483647]",
+            "w-screen overflow-hidden",
+            "cursor-default select-none touch-none",
+            "md:hidden",
+          ].join(" ")}
+          style={{
+            height:
+              "calc(100dvh + 2px)",
+
+            WebkitBackdropFilter:
+              overlay.phase ===
+              "forward-leaving"
+                ? "blur(0px)"
+                : "blur(16px)",
+
+            backdropFilter:
+              overlay.phase ===
+              "forward-leaving"
+                ? "blur(0px)"
+                : "blur(16px)",
+
+            transition:
+              "backdrop-filter 720ms cubic-bezier(0.22,1,0.36,1), -webkit-backdrop-filter 720ms cubic-bezier(0.22,1,0.36,1)",
+          }}
+        >
+          {/* Светлый фон */}
           <div
-            aria-hidden="true"
+            className="absolute inset-0 bg-[var(--color-bg)]"
+            style={{
+              opacity:
+                overlay.expanded &&
+                overlay.visible
+                  ? 1
+                  : 0,
+
+              transition:
+                overlay.phase ===
+                "forward-leaving"
+                  ? "opacity 620ms 100ms cubic-bezier(0.22,1,0.36,1)"
+                  : "opacity 320ms cubic-bezier(0.22,1,0.36,1)",
+            }}
+          />
+
+          {/* Стабильная область знака */}
+          <div
             className={[
-              "pointer-events-auto fixed",
-              "z-[2147483647]",
-              "overflow-hidden",
-              "bg-neutral-200",
-              "cursor-default",
-              "select-none",
-              "touch-none",
-              "will-change-[top,left,width,height,opacity,transform,border-radius]",
+              "absolute left-0 top-0",
+              "flex h-svh w-full",
+              "items-center justify-center",
+              "px-6",
             ].join(" ")}
+          >
+            <img
+              src="/images/logo-mark.svg"
+              alt=""
+              draggable={false}
+              className={[
+                "block h-[4.8rem] w-[4.8rem]",
+                "select-none transform-gpu",
+                "will-change-[opacity,filter,transform]",
+              ].join(" ")}
+              style={{
+                opacity:
+                  overlay.expanded &&
+                  overlay.visible
+                    ? 1
+                    : 0,
+
+                filter:
+                  overlay.expanded &&
+                  overlay.visible
+                    ? "blur(0px)"
+                    : "blur(18px)",
+
+                transform:
+                  overlay.expanded &&
+                  overlay.visible
+                    ? "scale(1)"
+                    : "scale(0.96)",
+
+                transition:
+                  overlay.phase ===
+                  "forward-leaving"
+                    ? [
+                        "opacity 420ms cubic-bezier(0.22,1,0.36,1)",
+                        "filter 560ms cubic-bezier(0.22,1,0.36,1)",
+                        "transform 560ms cubic-bezier(0.22,1,0.36,1)",
+                      ].join(", ")
+                    : [
+                        "opacity 520ms 150ms cubic-bezier(0.22,1,0.36,1)",
+                        "filter 720ms 120ms cubic-bezier(0.16,1,0.3,1)",
+                        "transform 720ms 120ms cubic-bezier(0.16,1,0.3,1)",
+                      ].join(", "),
+              }}
+            />
+          </div>
+        </div>
+      )}
+
+      <div
+        aria-hidden="true"
+        className={[
+  "pointer-events-auto fixed",
+  "z-[2147483647]",
+  "overflow-hidden",
+  "bg-neutral-200",
+  "cursor-default",
+  "select-none",
+  "touch-none",
+  "will-change-[top,left,width,height,opacity,transform,border-radius]",
+overlay.mode === "forward"
+  ? "hidden md:block"
+  : "",
+overlay.expanded
+    ? [
+        "h-svh",
+        "[@media(width:414px)_and_(orientation:portrait)]:!h-[calc(100dvh+2px)]",
+      ].join(" ")
+    : "",
+].join(" ")}
             style={{
               top:
                 overlay.expanded
@@ -941,9 +1056,9 @@ export default function ProjectTransitionProvider({
                   : overlay.rect.width,
 
               height:
-                overlay.expanded
-                  ? "100svh"
-                  : overlay.rect.height,
+  overlay.expanded
+    ? undefined
+    : overlay.rect.height,
 
               borderRadius:
                 overlay.expanded
@@ -1126,8 +1241,9 @@ export default function ProjectTransitionProvider({
                   "opacity 650ms cubic-bezier(0.22,1,0.36,1)",
               }}
             />
-          </div>,
-          document.body,
+                    </div>
+        </>,
+        document.body,
         )
       : null;
 
