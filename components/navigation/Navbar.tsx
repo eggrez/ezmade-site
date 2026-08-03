@@ -676,7 +676,7 @@ export default function Navbar({
           y: isHome ? navigationY : 0,
         }}
       >
-       <motion.div
+      <motion.div
   initial={
     shouldReduceMotion || isMobileViewport
       ? false
@@ -691,6 +691,15 @@ export default function Navbar({
     isMobileViewport
       ? { duration: 0 }
       : routeSurfaceTransition
+  }
+  style={
+    isMobileViewport
+      ? {
+          backgroundColor: "rgba(250, 250, 250, 0.62)",
+          backdropFilter: "blur(24px) saturate(1.18)",
+          WebkitBackdropFilter: "blur(24px) saturate(1.18)",
+        }
+      : undefined
   }
   className={navigationSurfaceClassName}
 />
