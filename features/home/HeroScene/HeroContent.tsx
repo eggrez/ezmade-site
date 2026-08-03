@@ -34,8 +34,7 @@ export default function HeroContent({
       return;
     }
 
-    let shouldPlayGlassVideo = false;
-    let hasStartedGlassLoad = false;
+    let shouldPlayGlassVideo = true;
 
     const ensureBackgroundPlayback = () => {
       if (document.visibilityState !== "visible") {
@@ -91,11 +90,7 @@ export default function HeroContent({
         return;
       }
 
-      if (!hasStartedGlassLoad) {
-        hasStartedGlassLoad = true;
-        glassVideo.preload = "auto";
-        glassVideo.load();
-      }
+      
 
       syncGlassVideo();
     };
