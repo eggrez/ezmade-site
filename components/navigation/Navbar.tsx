@@ -692,15 +692,10 @@ export default function Navbar({
       ? { duration: 0 }
       : routeSurfaceTransition
   }
-  style={
-    isMobileViewport
-      ? {
-          backgroundColor: "rgba(250, 250, 250, 0.62)",
-          backdropFilter: "blur(24px) saturate(1.18)",
-          WebkitBackdropFilter: "blur(24px) saturate(1.18)",
-        }
-      : undefined
-  }
+  style={{
+  backdropFilter: "blur(24px) saturate(1.18)",
+  WebkitBackdropFilter: "blur(24px) saturate(1.18)",
+}}
   className={navigationSurfaceClassName}
 />
       </motion.div>
