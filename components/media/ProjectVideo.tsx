@@ -55,6 +55,12 @@ type PendingSourceSwitch = {
   time: number;
   shouldResume: boolean;
 };
+type IOSVideoElement = HTMLVideoElement & {
+  webkitDisplayingFullscreen?: boolean;
+  webkitSupportsFullscreen?: boolean;
+  webkitEnterFullscreen?: () => void;
+  webkitExitFullscreen?: () => void;
+};
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -133,6 +139,14 @@ export default function ProjectVideo({
 
   const attemptedHighQualityRef =
     useRef(false);
+
+    
+
+const surfaceTouchStartRef =
+  useRef<{
+    x: number;
+    y: number;
+  } | null>(null);
 
   const [activeSource, setActiveSource] =
     useState(src);
@@ -345,41 +359,120 @@ export default function ProjectVideo({
       [showControls],
     );
 
-  const toggleFullscreen =
-    useCallback(async () => {
-      const container =
-        containerRef.current;
+ const toggleFullscreen =
+  useCallback(async () => {
+    const container =
+      containerRef.current;
 
-      if (!container) {
-        return;
+    const element =
+      videoRef.current as IOSVideoElement | null;
+
+    if (!container || !element) {
+      return;
+    }
+
+    /*
+     * Выход из нативного fullscreen-плеера
+     * iPhone/iPad.
+     */
+    if (
+      element.webkitDisplayingFullscreen
+    ) {
+      try {
+        element.webkitExitFullscreen?.();
+      } catch {
+        // Safari может сам управлять выходом
+        // через системный интерфейс плеера.
       }
 
+      return;
+    }
+
+    /*
+     * Выход из стандартного fullscreen.
+     */
+    if (document.fullscreenElement) {
       try {
-        if (
-          document.fullscreenElement
-        ) {
-          await document.exitFullscreen();
-          return;
-        }
-
-        if (
-          container.requestFullscreen
-        ) {
-          await container.requestFullscreen();
-          return;
-        }
-
-        const webkitContainer =
-          container as HTMLDivElement & {
-            webkitRequestFullscreen?: () => void;
-          };
-
-        webkitContainer.webkitRequestFullscreen?.();
+        await document.exitFullscreen();
       } catch {
         // Fullscreen может быть заблокирован
         // браузером или системой.
       }
-    }, []);
+
+      return;
+    }
+
+    /*
+     * На iPhone/iPad fullscreen вызывается
+     * непосредственно у video. Важно сделать
+     * это синхронно внутри нажатия пользователя.
+     */
+    const shouldUseNativeIOSFullscreen =
+      typeof element.webkitEnterFullscreen ===
+        "function" &&
+      element.webkitSupportsFullscreen !==
+        false &&
+      window
+        .matchMedia(
+          "(hover: none) and (pointer: coarse)",
+        )
+        .matches;
+
+    if (shouldUseNativeIOSFullscreen) {
+      try {
+        element.webkitEnterFullscreen?.();
+        return;
+      } catch {
+        // Ниже попробуем стандартный API.
+      }
+    }
+
+    /*
+     * Chrome, Firefox и desktop Safari.
+     */
+    if (
+      typeof container.requestFullscreen ===
+      "function"
+    ) {
+      try {
+        await container.requestFullscreen();
+        return;
+      } catch {
+        // Ниже используем WebKit fallback.
+      }
+    }
+
+    const webkitContainer =
+      container as HTMLDivElement & {
+        webkitRequestFullscreen?: () => void;
+      };
+
+    if (
+      typeof webkitContainer.webkitRequestFullscreen ===
+      "function"
+    ) {
+      try {
+        webkitContainer.webkitRequestFullscreen?.();
+        return;
+      } catch {
+        // Последний fallback — само video.
+      }
+    }
+
+    /*
+     * Последняя попытка для Safari.
+     */
+    if (
+      typeof element.webkitEnterFullscreen ===
+      "function"
+    ) {
+      try {
+        element.webkitEnterFullscreen?.();
+      } catch {
+        // Fullscreen недоступен.
+      }
+    }
+  }, []);
 
   function handleProgressClick(
     event: MouseEvent<HTMLDivElement>,
@@ -731,30 +824,68 @@ export default function ProjectVideo({
   ]);
 
   useEffect(() => {
-    function handleFullscreenChange() {
-      const fullscreenActive =
-        document.fullscreenElement ===
-        containerRef.current;
+  const element =
+    videoRef.current as IOSVideoElement | null;
 
-      setIsFullscreen(
-        fullscreenActive,
-      );
+  function handleFullscreenChange() {
+    const standardFullscreenActive =
+      document.fullscreenElement ===
+      containerRef.current;
 
-      setIsControlsVisible(true);
-    }
+    const iosFullscreenActive =
+      element?.webkitDisplayingFullscreen ===
+      true;
 
-    document.addEventListener(
+    setIsFullscreen(
+      standardFullscreenActive ||
+        iosFullscreenActive,
+    );
+
+    setIsControlsVisible(true);
+  }
+
+  function handleIOSFullscreenBegin() {
+    setIsFullscreen(true);
+    setIsControlsVisible(true);
+  }
+
+  function handleIOSFullscreenEnd() {
+    setIsFullscreen(false);
+    setIsControlsVisible(true);
+  }
+
+  document.addEventListener(
+    "fullscreenchange",
+    handleFullscreenChange,
+  );
+
+  element?.addEventListener(
+    "webkitbeginfullscreen",
+    handleIOSFullscreenBegin,
+  );
+
+  element?.addEventListener(
+    "webkitendfullscreen",
+    handleIOSFullscreenEnd,
+  );
+
+  return () => {
+    document.removeEventListener(
       "fullscreenchange",
       handleFullscreenChange,
     );
 
-    return () => {
-      document.removeEventListener(
-        "fullscreenchange",
-        handleFullscreenChange,
-      );
-    };
-  }, []);
+    element?.removeEventListener(
+      "webkitbeginfullscreen",
+      handleIOSFullscreenBegin,
+    );
+
+    element?.removeEventListener(
+      "webkitendfullscreen",
+      handleIOSFullscreenEnd,
+    );
+  };
+}, []);
 
   useEffect(() => {
     setActiveSource(src);
@@ -890,11 +1021,61 @@ export default function ProjectVideo({
             ? `Pause ${title}`
             : `Play ${title}`
         }
-        onPointerDown={(event) => {
-          event.preventDefault();
-          event.stopPropagation();
-          togglePlayback();
-        }}
+       onPointerDown={(event) => {
+  if (event.pointerType === "touch") {
+    return;
+  }
+
+  event.preventDefault();
+  event.stopPropagation();
+
+  togglePlayback();
+}}
+onTouchStart={(event) => {
+  const touch =
+    event.changedTouches[0];
+
+  if (!touch) {
+    return;
+  }
+
+  surfaceTouchStartRef.current = {
+    x: touch.clientX,
+    y: touch.clientY,
+  };
+}}
+onTouchEnd={(event) => {
+  const touch =
+    event.changedTouches[0];
+
+  const start =
+    surfaceTouchStartRef.current;
+
+  surfaceTouchStartRef.current =
+    null;
+
+  if (!touch || !start) {
+    return;
+  }
+
+  const distance = Math.hypot(
+    touch.clientX - start.x,
+    touch.clientY - start.y,
+  );
+
+  if (distance > 12) {
+    return;
+  }
+
+  event.preventDefault();
+  event.stopPropagation();
+
+  togglePlayback();
+}}
+onTouchCancel={() => {
+  surfaceTouchStartRef.current =
+    null;
+}}
         className={[
           "absolute inset-0 z-20",
           "cursor-pointer touch-manipulation",
