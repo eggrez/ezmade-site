@@ -14,6 +14,7 @@ import {
   useState,
 } from "react";
 import { createPortal } from "react-dom";
+import { usePathname } from "next/navigation";
 
 import { usePageTransition } from "@/components/transitions/PageTransitionProvider";
 import TransitionLink from "@/components/transitions/TransitionLink";
@@ -95,8 +96,16 @@ export default function Navbar({
   progress,
   onNavigate,
 }: NavbarProps) {
+  const pathname = usePathname();
   const isHome = variant === "home";
   const isProject = variant === "project";
+
+  /*
+   * Force a fresh blur reveal whenever the route changes.
+   * This also covers native browser Back/Forward navigation,
+   * where the transition providers may not have started first.
+   */
+  const routeRevealKey = `${pathname}:${variant}`;
 
   const activeRouteNavbarRevealTransition = isProject
     ? projectRouteNavbarRevealTransition
@@ -117,6 +126,12 @@ export default function Navbar({
     isProjectTransitioning;
 
   const [portalTarget, setPortalTarget] = useState<HTMLElement | null>(null);
+  const [isMobileViewport, setIsMobileViewport] = useState<boolean | null>(
+    null,
+  );
+  const [revealedMobileRouteKey, setRevealedMobileRouteKey] = useState<
+    string | null
+  >(null);
   const [activeButton, setActiveButton] = useState<ActiveButton>(null);
 
 
@@ -132,8 +147,54 @@ export default function Navbar({
    * position: fixed relative to the viewport on every route.
    */
   useEffect(() => {
+    const mobileMediaQuery = window.matchMedia("(max-width: 767px)");
+
+    const syncMobileViewport = () => {
+      setIsMobileViewport(mobileMediaQuery.matches);
+    };
+
+    syncMobileViewport();
     setPortalTarget(document.body);
+
+    mobileMediaQuery.addEventListener("change", syncMobileViewport);
+
+    return () => {
+      mobileMediaQuery.removeEventListener("change", syncMobileViewport);
+    };
   }, []);
+
+  /*
+   * Give iOS Safari two painted frames with the complete Navbar already in
+   * its hidden blur state before revealing it. Without this small paint gate,
+   * a hard refresh can occasionally skip the composited first frame and draw
+   * the logo sharply for a moment.
+   */
+  useEffect(() => {
+    if (isMobileViewport !== true || shouldReduceMotion) {
+      return;
+    }
+
+    let secondFrameId: number | null = null;
+
+    const firstFrameId = window.requestAnimationFrame(() => {
+      secondFrameId = window.requestAnimationFrame(() => {
+        setRevealedMobileRouteKey(routeRevealKey);
+      });
+    });
+
+    return () => {
+      window.cancelAnimationFrame(firstFrameId);
+
+      if (secondFrameId !== null) {
+        window.cancelAnimationFrame(secondFrameId);
+      }
+    };
+  }, [isMobileViewport, routeRevealKey, shouldReduceMotion]);
+
+  const isMobileRouteRevealReady =
+    isMobileViewport !== true ||
+    shouldReduceMotion ||
+    revealedMobileRouteKey === routeRevealKey;
 
   /*
    * Route visibility is derived directly from transition state.
@@ -143,12 +204,14 @@ export default function Navbar({
    * was cancelled before it had a chance to run.
    */
   const routeNavbarState =
-    shouldReduceMotion || !isTransitioning
+    shouldReduceMotion ||
+    (!isTransitioning && isMobileRouteRevealReady)
       ? visibleRouteNavbar
       : hiddenRouteNavbar;
 
   const routeSurfaceState =
-    shouldReduceMotion || !isTransitioning
+    shouldReduceMotion ||
+    (!isTransitioning && isMobileRouteRevealReady)
       ? visibleRouteSurface
       : hiddenRouteSurface;
 
@@ -415,13 +478,16 @@ export default function Navbar({
 
   const logoImage = (
     <span className="relative block">
-      <img
-        src="/logo.svg"
-        alt="EZ"
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 64 64"
         className={["block h-auto", "w-[clamp(34px,2.6vw,48px)]"].join(
           " ",
         )}
-      />
+      >
+        <path d="M44.851,64h15.13c2.22,0,4.019-1.791,4.019-4v-15.149l-19.149,19.149Z" />
+        <path d="M64,39.181V4c0-2.209-1.799-4-4.019-4H4.019C1.799,0,0,1.791,0,4v55.999c0,2.209,1.799,4,4.019,4h35.162l24.819-24.819Z" />
+      </svg>
 
       <span
         aria-hidden="true"
@@ -477,23 +543,23 @@ export default function Navbar({
     .filter(Boolean)
     .join(" ");
 
- const navigationSurfaceClassName = [
-  "absolute inset-0",
+  const navigationSurfaceClassName = [
+    "absolute inset-0",
 
-  "border-b border-black/[0.025]",
+    "border-b border-black/[0.025]",
 
-  "bg-[rgba(243,245,244,0.28)]",
-  "supports-[backdrop-filter]:bg-[rgba(243,245,244,0.16)]",
+    "bg-[rgba(243,245,244,0.28)]",
+    "supports-[backdrop-filter]:bg-[rgba(243,245,244,0.16)]",
 
-  "backdrop-blur-[10px]",
-  "backdrop-saturate-[1.05]",
+    "backdrop-blur-[10px]",
+    "backdrop-saturate-[1.05]",
 
-  isProject
-    ? "shadow-[inset_0_1px_0_rgba(255,255,255,0.28),0_8px_30px_rgba(17,17,17,0.025)]"
-    : "shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_6px_24px_rgba(17,17,17,0.012)]",
+    isProject
+      ? "shadow-[inset_0_1px_0_rgba(255,255,255,0.28),0_8px_30px_rgba(17,17,17,0.025)]"
+      : "shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_6px_24px_rgba(17,17,17,0.012)]",
 
-  "will-change-[opacity]",
-].join(" ");
+    "will-change-[opacity]",
+  ].join(" ");
 
   const ctaContent = (
     <>
@@ -548,7 +614,7 @@ export default function Navbar({
     </>
   );
 
-  if (!portalTarget) {
+  if (!portalTarget || isMobileViewport === null) {
     return null;
   }
 
@@ -569,6 +635,29 @@ export default function Navbar({
       "bg-transparent",
     ].join(" ")}
   >
+    <motion.div
+      key={isMobileViewport ? routeRevealKey : "desktop-navbar"}
+      initial={
+        shouldReduceMotion || !isMobileViewport
+          ? false
+          : hiddenRouteNavbar
+      }
+      animate={
+        isMobileViewport
+          ? routeNavbarState
+          : visibleRouteNavbar
+      }
+      transition={
+        isMobileViewport
+          ? routeNavbarTransition
+          : { duration: 0 }
+      }
+      className={[
+        "relative w-full",
+        "transform-gpu [backface-visibility:hidden]",
+        "will-change-[opacity,filter]",
+      ].join(" ")}
+    >
       <motion.div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0"
@@ -579,24 +668,40 @@ export default function Navbar({
       >
        <motion.div
   initial={
-    shouldReduceMotion
+    shouldReduceMotion || isMobileViewport
       ? false
       : hiddenRouteSurface
   }
-  animate={routeSurfaceState}
-  transition={routeSurfaceTransition}
+  animate={
+    isMobileViewport
+      ? visibleRouteSurface
+      : routeSurfaceState
+  }
+  transition={
+    isMobileViewport
+      ? { duration: 0 }
+      : routeSurfaceTransition
+  }
   className={navigationSurfaceClassName}
 />
       </motion.div>
 
       <motion.nav
   initial={
-    shouldReduceMotion
+    shouldReduceMotion || isMobileViewport
       ? false
       : hiddenRouteNavbar
   }
-  animate={routeNavbarState}
-  transition={routeNavbarTransition}
+  animate={
+    isMobileViewport
+      ? visibleRouteNavbar
+      : routeNavbarState
+  }
+  transition={
+    isMobileViewport
+      ? { duration: 0 }
+      : routeNavbarTransition
+  }
   aria-label="Primary navigation"
   className={navigationBarClassName}
 >
@@ -727,6 +832,7 @@ export default function Navbar({
           </div>
         </motion.div>
       </motion.nav>
+    </motion.div>
     </motion.header>,
     portalTarget,
   );

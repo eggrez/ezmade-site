@@ -4,7 +4,9 @@ import {
   motion,
   type MotionValue,
   useMotionTemplate,
+  useMotionValue,
   useReducedMotion,
+  useSpring,
   useTransform,
 } from "framer-motion";
 import { useEffect, useRef } from "react";
@@ -24,7 +26,93 @@ export default function HeroContent({
   const shouldReduceMotion = useReducedMotion();
   const backgroundVideoRef = useRef<HTMLVideoElement>(null);
   const glassVideoRef = useRef<HTMLVideoElement>(null);
+  const mobileViewportTargetY = useMotionValue(0);
+  const mobileViewportY = useSpring(mobileViewportTargetY, {
+    stiffness: 180,
+    damping: 26,
+    mass: 0.4,
+  });
 
+  /*
+   * iOS Safari grows the visible viewport in small steps while its bottom
+   * toolbar collapses. Read that change during scrolling, then spring only
+   * the mark by half of the height delta so it remains visually centred
+   * without inheriting the browser's stepped 100dvh updates.
+   */
+  useEffect(() => {
+    const mobilePortrait = window.matchMedia(
+      "(max-width: 767px) and (orientation: portrait)",
+    );
+    const viewport = window.visualViewport;
+
+    let baselineHeight = viewport?.height ?? window.innerHeight;
+    let previousWidth = viewport?.width ?? window.innerWidth;
+    let frameId: number | null = null;
+
+    const resetBaseline = () => {
+      baselineHeight = viewport?.height ?? window.innerHeight;
+      previousWidth = viewport?.width ?? window.innerWidth;
+      mobileViewportTargetY.jump(0);
+    };
+
+    const updatePosition = () => {
+      frameId = null;
+
+      if (!mobilePortrait.matches) {
+        mobileViewportTargetY.set(0);
+        return;
+      }
+
+      const currentHeight = viewport?.height ?? window.innerHeight;
+      const currentWidth = viewport?.width ?? window.innerWidth;
+
+      /* A material width change is an orientation/resize, not toolbar motion. */
+      if (Math.abs(currentWidth - previousWidth) > 24) {
+        resetBaseline();
+        return;
+      }
+
+      previousWidth = currentWidth;
+
+      const centredOffset = (currentHeight - baselineHeight) / 2;
+      const safeOffset = Math.max(-64, Math.min(64, centredOffset));
+
+      mobileViewportTargetY.set(safeOffset);
+    };
+
+    const scheduleUpdate = () => {
+      if (frameId !== null) {
+        return;
+      }
+
+      frameId = window.requestAnimationFrame(updatePosition);
+    };
+
+    const handleViewportModeChange = () => {
+      resetBaseline();
+      scheduleUpdate();
+    };
+
+    viewport?.addEventListener("resize", scheduleUpdate, { passive: true });
+    viewport?.addEventListener("scroll", scheduleUpdate, { passive: true });
+    window.addEventListener("resize", scheduleUpdate, { passive: true });
+    window.addEventListener("scroll", scheduleUpdate, { passive: true });
+    mobilePortrait.addEventListener("change", handleViewportModeChange);
+
+    resetBaseline();
+
+    return () => {
+      if (frameId !== null) {
+        window.cancelAnimationFrame(frameId);
+      }
+
+      viewport?.removeEventListener("resize", scheduleUpdate);
+      viewport?.removeEventListener("scroll", scheduleUpdate);
+      window.removeEventListener("resize", scheduleUpdate);
+      window.removeEventListener("scroll", scheduleUpdate);
+      mobilePortrait.removeEventListener("change", handleViewportModeChange);
+    };
+  }, [mobileViewportTargetY]);
 
   useEffect(() => {
     const backgroundVideo = backgroundVideoRef.current;
@@ -34,8 +122,7 @@ export default function HeroContent({
       return;
     }
 
-    let shouldPlayGlassVideo = false;
-    let hasStartedGlassLoad = false;
+    let shouldPlayGlassVideo = true;
 
     const ensureBackgroundPlayback = () => {
       if (document.visibilityState !== "visible") {
@@ -84,17 +171,11 @@ export default function HeroContent({
     };
 
     const updateGlassPlayback = (value: number) => {
-      shouldPlayGlassVideo = value >= 0.16 && value <= 0.74;
+      shouldPlayGlassVideo = value <= 0.74;
 
       if (!shouldPlayGlassVideo) {
         glassVideo.pause();
         return;
-      }
-
-      if (!hasStartedGlassLoad) {
-        hasStartedGlassLoad = true;
-        glassVideo.preload = "auto";
-        glassVideo.load();
       }
 
       syncGlassVideo();
@@ -143,36 +224,40 @@ export default function HeroContent({
     [0, 0, 1.5, 8],
   );
 
-  const introMarkY = useTransform(
+  const introMarkSceneY = useTransform(
     progress,
     [0, 0.16, 0.33],
     [0, 0, -4],
+  );
+
+  const introMarkY = useTransform(
+    () => introMarkSceneY.get() + mobileViewportY.get(),
   );
 
   const introMarkFilter = useMotionTemplate`blur(${introMarkBlur}px)`;
 
   const wordmarkOpacity = useTransform(
     progress,
-    [0, 0.18, 0.27, 0.37, 0.60, 0.72],
-    [0, 0, 0.48, 1, 0.94, 0],
+    [0, 0.32, 0.4, 0.53, 0.61, 0.69],
+    [0, 0, 0.12, 1, 1, 0],
   );
 
   const wordmarkScale = useTransform(
     progress,
-    [0.2, 0.36, 0.62],
-    [0.992, 1, 1.012],
+    [0.32, 0.53, 0.69],
+    [0.992, 1, 1.006],
   );
 
   const wordmarkY = useTransform(
     progress,
-    [0.2, 0.36, 0.62],
-    [6, 0, -5],
+    [0.32, 0.53, 0.69],
+    [5, 0, -3],
   );
 
   const wordmarkBlur = useTransform(
     progress,
-    [0.2, 0.27, 0.36, 0.56, 0.69],
-    [10, 4, 0.35, 0.7, 9],
+    [0, 0.32, 0.4, 0.53, 0.61, 0.69],
+    [18, 18, 8, 0, 0, 12],
   );
 
   const wordmarkBrightness = useTransform(
@@ -327,6 +412,7 @@ export default function HeroContent({
 
       <div
         className={[
+          "ez-hero-intro-mark-viewport",
           "pointer-events-none",
           "absolute inset-0 z-20",
           "flex items-center justify-center",
@@ -436,10 +522,11 @@ export default function HeroContent({
             <motion.video
               ref={glassVideoRef}
               src={HERO_VIDEO_SRC}
+              autoPlay
               muted
               loop
               playsInline
-              preload="none"
+              preload="auto"
               style={{
                 x: innerCloudX,
                 y: innerCloudY,
@@ -467,6 +554,16 @@ export default function HeroContent({
                 background:
                   "linear-gradient(180deg, rgba(255,255,255,0.038) 0%, rgba(255,255,255,0.014) 50%, rgba(210,224,223,0.022) 100%)",
               }}
+            />
+
+            {/*
+             * iOS Safari composites two synchronised video layers with less
+             * separation than Chromium/Firefox. This stable wash restores the
+             * milky glass body without delaying or restarting the inner video.
+             */}
+            <div
+              aria-hidden="true"
+              className="ez-hero-glass-safari-wash absolute inset-0"
             />
 
             {/* Внутренние свет и тень создают толщину */}
