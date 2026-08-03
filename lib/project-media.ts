@@ -103,7 +103,7 @@ const projectMedia: Record<string, ProjectMediaConfig> = {
     ],
   },
   "yandex-lavka": {
-    cover: "cover.jpg",
+    cover: "cover_v2.jpg",
     videos: [{ src: "video.mp4" }],
     gallery: [
       { filename: "01.jpg", layout: "wide" },
