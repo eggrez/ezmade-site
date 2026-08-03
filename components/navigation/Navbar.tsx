@@ -505,28 +505,21 @@ export default function Navbar({
   const navigationSurfaceClassName = [
   "absolute inset-0",
 
-  "border-b border-black/[0.025]",
-
-  /*
-   * Тот же холодный светлый оттенок,
-   * что и у основной поверхности сайта.
-   * Фон остаётся прозрачным, поэтому grain,
-   * emulsion и color drift визуально продолжаются.
-   */
-  "bg-[rgba(243,245,244,0.28)]",
-  "supports-[backdrop-filter]:bg-[rgba(243,245,244,0.16)]",
-
-  /*
-   * Blur оставляем, но делаем слабее.
-   * Сильный blur превращал Navbar в отдельную
-   * матовую стеклянную полосу.
-   */
-  "backdrop-blur-[10px]",
-  "backdrop-saturate-[1.05]",
-
   isProject
-    ? "shadow-[inset_0_1px_0_rgba(255,255,255,0.28),0_8px_30px_rgba(17,17,17,0.025)]"
-    : "shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_6px_24px_rgba(17,17,17,0.012)]",
+    ? [
+        "border-b border-white/[0.22]",
+        "bg-white/[0.32]",
+        "shadow-[inset_0_1px_0_rgba(255,255,255,0.58),0_10px_36px_rgba(17,17,17,0.07)]",
+        "backdrop-blur-[32px]",
+        "backdrop-saturate-[1.25]",
+      ].join(" ")
+    : [
+        "border-b border-black/[0.045]",
+        "bg-white/[0.56]",
+        "shadow-[0_8px_28px_rgba(17,17,17,0.025)]",
+        "backdrop-blur-[24px]",
+        "backdrop-saturate-[1.12]",
+      ].join(" "),
 
   "will-change-[opacity]",
 ].join(" ");
