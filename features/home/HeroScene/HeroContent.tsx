@@ -237,28 +237,28 @@ export default function HeroContent({
   const introMarkFilter = useMotionTemplate`blur(${introMarkBlur}px)`;
 
   const wordmarkOpacity = useTransform(
-    progress,
-    [0, 0.32, 0.4, 0.53, 0.61, 0.69],
-    [0, 0, 0.12, 1, 1, 0],
-  );
+  progress,
+  [0, 0.26, 0.32, 0.4, 0.61, 0.7],
+  [0, 0, 0.12, 1, 1, 0],
+);
 
-  const wordmarkScale = useTransform(
-    progress,
-    [0.32, 0.53, 0.69],
-    [0.992, 1, 1.006],
-  );
+const wordmarkScale = useTransform(
+  progress,
+  [0.26, 0.4, 0.7],
+  [0.992, 1, 1.006],
+);
 
-  const wordmarkY = useTransform(
-    progress,
-    [0.32, 0.53, 0.69],
-    [5, 0, -3],
-  );
+const wordmarkY = useTransform(
+  progress,
+  [0.26, 0.4, 0.7],
+  [5, 0, -3],
+);
 
-  const wordmarkBlur = useTransform(
-    progress,
-    [0, 0.32, 0.4, 0.53, 0.61, 0.69],
-    [18, 18, 8, 0, 0, 12],
-  );
+const wordmarkBlur = useTransform(
+  progress,
+  [0, 0.26, 0.32, 0.4, 0.61, 0.7],
+  [18, 18, 8, 0, 0, 12],
+);
 
   const wordmarkBrightness = useTransform(
     progress,
