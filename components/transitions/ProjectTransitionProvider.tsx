@@ -65,6 +65,7 @@ type OverlayState = {
   phase: OverlayPhase;
 
   mobileLight: boolean;
+sourceDissolved: boolean;
 
   slug: string;
   image: string;
@@ -120,6 +121,9 @@ const MOBILE_FORWARD_ROUTE_DURATION =
 
 const MOBILE_FORWARD_EXIT_DURATION =
   1850;
+
+  const MOBILE_SOURCE_DISSOLVE_DURATION =
+  1100;
 
 const REVERSE_COVER_DURATION =
   900;
@@ -236,6 +240,11 @@ export default function ProjectTransitionProvider({
       null,
     );
 
+    const sourceDissolveTimerRef =
+  useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
+
   const frameRef =
     useRef<number | null>(
       null,
@@ -317,6 +326,18 @@ export default function ProjectTransitionProvider({
         routeWaitTimerRef.current =
           null;
       }
+      if (
+  sourceDissolveTimerRef.current
+) {
+  clearTimeout(
+    sourceDissolveTimerRef.current,
+  );
+
+  sourceDissolveTimerRef.current =
+    null;
+}
+
+
 
       if (
         frameRef.current !== null
@@ -424,9 +445,10 @@ export default function ProjectTransitionProvider({
              phase:
               "forward-expanding",
 
-            mobileLight,
+           mobileLight,
+sourceDissolved: false,
 
-            slug,
+slug,
             image,
             title,
 
@@ -461,29 +483,60 @@ export default function ProjectTransitionProvider({
          * геометрию overlay.
          */
         frameRef.current =
-          requestAnimationFrame(() => {
-            setOverlay(
-              (current) => {
-                if (
-                  !current ||
-                  current.mode !==
-                    "forward"
-                ) {
-                  return current;
-                }
+  requestAnimationFrame(() => {
+    setOverlay(
+      (current) => {
+        if (
+          !current ||
+          current.mode !==
+            "forward"
+        ) {
+          return current;
+        }
 
-                const next = {
-                  ...current,
-                  expanded: true,
-                };
+        const next = {
+          ...current,
+          sourceDissolved: true,
+          expanded:
+            current.mobileLight
+              ? current.expanded
+              : true,
+        };
 
-                overlayRef.current =
-                  next;
+        overlayRef.current =
+          next;
 
-                return next;
-              },
-            );
-          });
+        return next;
+      },
+    );
+
+    if (mobileLight) {
+      sourceDissolveTimerRef.current =
+        setTimeout(() => {
+          setOverlay(
+            (current) => {
+              if (
+                !current ||
+                current.mode !==
+                  "forward"
+              ) {
+                return current;
+              }
+
+              const next = {
+                ...current,
+                expanded: true,
+              };
+
+              overlayRef.current =
+                next;
+
+              return next;
+            },
+          );
+        }, MOBILE_SOURCE_DISSOLVE_DURATION);
+    }
+  });
 
         routeTimerRef.current =
           setTimeout(() => {
@@ -493,9 +546,10 @@ export default function ProjectTransitionProvider({
                 scroll: false,
               },
             );
-       }, mobileLight
-            ? MOBILE_FORWARD_ROUTE_DURATION
-            : FORWARD_EXPAND_DURATION);
+      }, mobileLight
+  ? MOBILE_SOURCE_DISSOLVE_DURATION +
+    MOBILE_FORWARD_ROUTE_DURATION
+  : FORWARD_EXPAND_DURATION);
       },
       [
         clearTimers,
@@ -560,8 +614,9 @@ export default function ProjectTransitionProvider({
               "reverse-covering",
 
             mobileLight: false,
+sourceDissolved: false,
 
-            slug:
+slug:
               transitionSlug,
 
             image:
@@ -951,34 +1006,34 @@ export default function ProjectTransitionProvider({
                     "calc(100dvh + 2px)",
 
                   WebkitBackdropFilter:
-                    overlay.expanded &&
-                    overlay.phase !==
-                      "forward-leaving"
-                      ? "blur(14px)"
-                      : "blur(0px)",
+  overlay.sourceDissolved &&
+  overlay.phase !==
+    "forward-leaving"
+    ? "blur(18px)"
+    : "blur(0px)",
 
-                  backdropFilter:
-                    overlay.expanded &&
-                    overlay.phase !==
-                      "forward-leaving"
-                      ? "blur(14px)"
-                      : "blur(0px)",
+backdropFilter:
+  overlay.sourceDissolved &&
+  overlay.phase !==
+    "forward-leaving"
+    ? "blur(18px)"
+    : "blur(0px)",
 
-                  transition: [
-                    `backdrop-filter ${
-                      overlay.phase ===
-                      "forward-leaving"
-                        ? 1650
-                        : 1150
-                    }ms cubic-bezier(0.37,0,0.63,1)`,
+transition: [
+  `backdrop-filter ${
+    overlay.phase ===
+    "forward-leaving"
+      ? 1650
+      : MOBILE_SOURCE_DISSOLVE_DURATION
+  }ms cubic-bezier(0.37,0,0.63,1)`,
 
-                    `-webkit-backdrop-filter ${
-                      overlay.phase ===
-                      "forward-leaving"
-                        ? 1650
-                        : 1150
-                    }ms cubic-bezier(0.37,0,0.63,1)`,
-                  ].join(", "),
+  `-webkit-backdrop-filter ${
+    overlay.phase ===
+    "forward-leaving"
+      ? 1650
+      : MOBILE_SOURCE_DISSOLVE_DURATION
+  }ms cubic-bezier(0.37,0,0.63,1)`,
+].join(", "),
                 }}
               >
                 {/* Светлый фон */}
@@ -986,16 +1041,21 @@ export default function ProjectTransitionProvider({
                   className="absolute inset-0 bg-[var(--color-bg)]"
                   style={{
                     opacity:
-                      overlay.expanded &&
-                      overlay.visible
-                        ? 1
-                        : 0,
+  overlay.expanded &&
+  overlay.visible
+    ? 1
+    : overlay.sourceDissolved &&
+        overlay.visible
+      ? 0.26
+      : 0,
 
-                    transition:
-                      overlay.phase ===
-                      "forward-leaving"
-                        ? "opacity 1450ms 260ms cubic-bezier(0.37,0,0.63,1)"
-                        : "opacity 650ms cubic-bezier(0.22,1,0.36,1)",
+transition:
+  overlay.phase ===
+  "forward-leaving"
+    ? "opacity 1450ms 260ms cubic-bezier(0.37,0,0.63,1)"
+    : overlay.expanded
+      ? "opacity 720ms cubic-bezier(0.22,1,0.36,1)"
+      : `opacity ${MOBILE_SOURCE_DISSOLVE_DURATION}ms cubic-bezier(0.37,0,0.63,1)`,
                   }}
                 />
 
@@ -1082,22 +1142,22 @@ export default function ProjectTransitionProvider({
                       aria-hidden="true"
                       viewBox="0 0 64 64"
                       className="absolute inset-0 h-full w-full text-black will-change-[clip-path]"
-                      style={{
-                        WebkitClipPath:
-                          overlay.expanded
-                            ? "inset(0% 0% 0% 0%)"
-                            : "inset(50% 50% 50% 50%)",
+                     style={{
+  WebkitClipPath:
+    overlay.expanded
+      ? "polygon(-100% -100%, 300% -100%, -100% 300%)"
+      : "polygon(-100% -100%, 100% -100%, -100% 100%)",
 
-                        clipPath:
-                          overlay.expanded
-                            ? "inset(0% 0% 0% 0%)"
-                            : "inset(50% 50% 50% 50%)",
+  clipPath:
+    overlay.expanded
+      ? "polygon(-100% -100%, 300% -100%, -100% 300%)"
+      : "polygon(-100% -100%, 100% -100%, -100% 100%)",
 
-                        transition: [
-                          "clip-path 1000ms 1050ms cubic-bezier(0.16,1,0.3,1)",
-                          "-webkit-clip-path 1000ms 1050ms cubic-bezier(0.16,1,0.3,1)",
-                        ].join(", "),
-                      }}
+  transition: [
+    "clip-path 1000ms 1050ms cubic-bezier(0.16,1,0.3,1)",
+    "-webkit-clip-path 1000ms 1050ms cubic-bezier(0.16,1,0.3,1)",
+  ].join(", "),
+}}
                     >
                       <path
                         d="M44.851 64h15.13C62.201 64 64 62.209 64 60V44.851L44.851 64Z"
