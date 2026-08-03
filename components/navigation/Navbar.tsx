@@ -214,11 +214,7 @@ export default function Navbar({
       ? visibleRouteNavbar
       : hiddenRouteNavbar;
 
-      const routeLayerState =
-  shouldReduceMotion ||
-  (!isTransitioning && isMobileRouteRevealReady)
-    ? visibleRouteLayer
-    : hiddenRouteNavbar;
+   
 
   const routeSurfaceState =
     shouldReduceMotion ||
@@ -647,75 +643,47 @@ export default function Navbar({
     ].join(" ")}
   >
     <motion.div
-      key={isMobileViewport ? routeRevealKey : "desktop-navbar"}
-      initial={
-        shouldReduceMotion || !isMobileViewport
-          ? false
-          : hiddenRouteNavbar
-      }
-     animate={
-  isMobileViewport
-    ? routeLayerState
-    : visibleRouteLayer
-}
-      transition={
-        isMobileViewport
-          ? routeNavbarTransition
-          : { duration: 0 }
-      }
-      className={[
-  "relative w-full",
-  "[backface-visibility:hidden]",
-].join(" ")}
-    >
+  key={isMobileViewport ? routeRevealKey : "desktop-navbar"}
+  initial={false}
+  animate={visibleRouteLayer}
+  transition={{ duration: 0 }}
+  className={[
+    "relative w-full",
+    "[backface-visibility:hidden]",
+  ].join(" ")}
+>
       <motion.div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0"
-        style={{
-          opacity: isHome ? navigationOpacity : 1,
-          y: isHome ? navigationY : 0,
-        }}
-      >
-      <motion.div
-  initial={
-    shouldReduceMotion || isMobileViewport
-      ? false
-      : hiddenRouteSurface
-  }
-  animate={
-    isMobileViewport
-      ? visibleRouteSurface
-      : routeSurfaceState
-  }
-  transition={
-    isMobileViewport
-      ? { duration: 0 }
-      : routeSurfaceTransition
-  }
+  aria-hidden="true"
+  className="pointer-events-none absolute inset-0"
   style={{
-  backdropFilter: "blur(24px) saturate(1.18)",
-  WebkitBackdropFilter: "blur(24px) saturate(1.18)",
-}}
-  className={navigationSurfaceClassName}
-/>
-      </motion.div>
+    opacity: isHome ? navigationOpacity : 1,
+    y: isHome ? navigationY : 0,
+  }}
+>
+  <motion.div
+    initial={
+      shouldReduceMotion
+        ? false
+        : hiddenRouteSurface
+    }
+    animate={routeSurfaceState}
+    transition={routeSurfaceTransition}
+    style={{
+      backdropFilter: "blur(24px) saturate(1.18)",
+      WebkitBackdropFilter: "blur(24px) saturate(1.18)",
+    }}
+    className={navigationSurfaceClassName}
+  />
+</motion.div>
 
-      <motion.nav
+<motion.nav
   initial={
-    shouldReduceMotion || isMobileViewport
+    shouldReduceMotion
       ? false
       : hiddenRouteNavbar
   }
-  animate={
-    isMobileViewport
-      ? visibleRouteNavbar
-      : routeNavbarState
-  }
-  transition={
-    isMobileViewport
-      ? { duration: 0 }
-      : routeNavbarTransition
-  }
+  animate={routeNavbarState}
+  transition={routeNavbarTransition}
   aria-label="Primary navigation"
   className={navigationBarClassName}
 >
