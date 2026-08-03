@@ -54,7 +54,7 @@ const sizeClasses: Record<
 };
 
 const baseClasses = [
-  "group relative isolate",
+  "ez-glass-control group relative isolate",
   "inline-flex shrink-0 items-center justify-center",
   "overflow-hidden rounded-full",
   "font-normal leading-none",

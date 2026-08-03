@@ -606,6 +606,7 @@ export default function HomeExperience() {
           className={[
             "sticky top-0",
             "h-svh w-full",
+            "[@media(width:414px)_and_(orientation:portrait)]:!h-[calc(100svh+2px)]",
             "overflow-hidden",
             "bg-[var(--color-bg)]",
           ].join(" ")}
@@ -646,7 +647,7 @@ export default function HomeExperience() {
               range={homeTimeline.hero}
               preset={{
                 enterY: 0,
-                exitY: -24,
+                exitY: 0,
                 enterScale: 1,
                 exitScale: 1.008,
                 enterBlur: 0,

@@ -93,6 +93,8 @@ export default function CustomCursor() {
       null,
     );
 
+  const hasPointerPositionRef = useRef(false);
+
   const [isEnabled, setIsEnabled] =
     useState(false);
 
@@ -211,13 +213,24 @@ export default function CustomCursor() {
       }
 
       /*
-       * Сначала задаём реальные координаты,
-       * затем разрешаем отрисовку курсора.
+       * На первом движении сразу ставим и цель, и обе пружины
+       * в реальные координаты. Иначе курсор успевает появиться
+       * в -100 / -100 и пролетает к мыши через весь экран.
        */
-      pointerX.set(event.clientX);
-      pointerY.set(event.clientY);
+      if (!hasPointerPositionRef.current) {
+        hasPointerPositionRef.current = true;
 
-      setIsCursorReady(true);
+        pointerX.jump(event.clientX);
+        pointerY.jump(event.clientY);
+        springX.jump(event.clientX);
+        springY.jump(event.clientY);
+
+        setIsCursorReady(true);
+      } else {
+        pointerX.set(event.clientX);
+        pointerY.set(event.clientY);
+      }
+
       setIsVisible(true);
 
       registerMovement();
@@ -374,7 +387,7 @@ export default function CustomCursor() {
         handleMouseEnter,
       );
     };
-  }, [pointerX, pointerY]);
+  }, [pointerX, pointerY, springX, springY]);
 
   /*
    * Плавная реакция на hover и click.

@@ -167,10 +167,12 @@ export default function AboutContent({
                     "text-[var(--color-text-secondary)]",
                   ].join(" ")}
                 >
-                  Made easy isn&apos;t about making the work
-                  easier. It&apos;s about making the process
-                  effortless for our clients while never
-                  compromising on craft.
+                  <span className="xl:block xl:whitespace-nowrap">
+  Made easy isn&apos;t about making the work easier. It&apos;s about making the process
+</span>
+<span className="xl:block xl:whitespace-nowrap">
+  effortless for our clients while never compromising on craft.
+</span>
                 </motion.p>
               </div>
             </div>
@@ -217,6 +219,8 @@ export default function AboutContent({
   "aspect-[4/4.6]",
   "[@media(min-width:1024px)_and_(max-height:700px)]:aspect-[4/3.9]",
   "w-full",
+"[@media(width:414px)_and_(orientation:portrait)]:mx-auto",
+"[@media(width:414px)_and_(orientation:portrait)]:w-[92%]",
   "[@media(min-width:900px)_and_(max-width:1100px)_and_(max-height:700px)]:aspect-[4/5]",
   "overflow-hidden",
   "rounded-sm",

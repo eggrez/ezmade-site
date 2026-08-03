@@ -14,7 +14,7 @@ type HeroContentProps = {
   rawProgress: MotionValue<number>;
 };
 
-const HERO_VIDEO_SRC = "https://media.ezmade.pro/videos/hero.mp4";
+const HERO_VIDEO_SRC = "https://media.ezmade.pro/videos/hero-web.mp4";
 const EZ_LOGO_SRC = "/images/ez-wordmark-glass-mask.svg";
 
 export default function HeroContent({
@@ -34,8 +34,22 @@ export default function HeroContent({
       return;
     }
 
+    let shouldPlayGlassVideo = false;
+    let hasStartedGlassLoad = false;
+
+    const ensureBackgroundPlayback = () => {
+      if (document.visibilityState !== "visible") {
+        return;
+      }
+
+      backgroundVideo.muted = true;
+
+      void backgroundVideo.play().catch(() => undefined);
+    };
+
     const syncGlassVideo = () => {
       if (
+        !shouldPlayGlassVideo ||
         backgroundVideo.readyState < HTMLMediaElement.HAVE_CURRENT_DATA ||
         glassVideo.readyState < HTMLMediaElement.HAVE_METADATA
       ) {
@@ -62,23 +76,60 @@ export default function HeroContent({
     };
 
     const handlePause = () => glassVideo.pause();
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        ensureBackgroundPlayback();
+        syncGlassVideo();
+      }
+    };
+
+    const updateGlassPlayback = (value: number) => {
+      shouldPlayGlassVideo = value >= 0.16 && value <= 0.74;
+
+      if (!shouldPlayGlassVideo) {
+        glassVideo.pause();
+        return;
+      }
+
+      if (!hasStartedGlassLoad) {
+        hasStartedGlassLoad = true;
+        glassVideo.preload = "auto";
+        glassVideo.load();
+      }
+
+      syncGlassVideo();
+    };
+
     const intervalId = window.setInterval(syncGlassVideo, 800);
+    const unsubscribeProgress = progress.on("change", updateGlassPlayback);
 
     backgroundVideo.addEventListener("play", syncGlassVideo);
+    backgroundVideo.addEventListener("playing", syncGlassVideo);
     backgroundVideo.addEventListener("pause", handlePause);
     backgroundVideo.addEventListener("seeked", syncGlassVideo);
+    backgroundVideo.addEventListener("loadeddata", ensureBackgroundPlayback);
+    backgroundVideo.addEventListener("canplay", ensureBackgroundPlayback);
     glassVideo.addEventListener("loadedmetadata", syncGlassVideo);
+    glassVideo.addEventListener("canplay", syncGlassVideo);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
-    syncGlassVideo();
+    updateGlassPlayback(progress.get());
+    ensureBackgroundPlayback();
 
     return () => {
       window.clearInterval(intervalId);
+      unsubscribeProgress();
       backgroundVideo.removeEventListener("play", syncGlassVideo);
+      backgroundVideo.removeEventListener("playing", syncGlassVideo);
       backgroundVideo.removeEventListener("pause", handlePause);
       backgroundVideo.removeEventListener("seeked", syncGlassVideo);
+      backgroundVideo.removeEventListener("loadeddata", ensureBackgroundPlayback);
+      backgroundVideo.removeEventListener("canplay", ensureBackgroundPlayback);
       glassVideo.removeEventListener("loadedmetadata", syncGlassVideo);
+      glassVideo.removeEventListener("canplay", syncGlassVideo);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, []);
+  }, [progress]);
 
   const introMarkOpacity = useTransform(
     progress,
@@ -385,11 +436,10 @@ export default function HeroContent({
             <motion.video
               ref={glassVideoRef}
               src={HERO_VIDEO_SRC}
-              autoPlay
               muted
               loop
               playsInline
-              preload="auto"
+              preload="none"
               style={{
                 x: innerCloudX,
                 y: innerCloudY,

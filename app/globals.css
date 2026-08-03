@@ -56,6 +56,22 @@ select {
   color: var(--color-bg);
 }
 
+/*
+ * Firefox can briefly repaint a backdrop-filter descendant as a sharp layer
+ * while an ancestor is animating filter: blur(...). The glass controls keep
+ * their translucent fill, highlight, border and shadow in Firefox; only the
+ * conflicting backdrop sampling is disabled so the outer blur reveal remains
+ * continuous.
+ */
+@supports (-moz-appearance: none) {
+  .ez-glass-control {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    will-change: auto;
+    backface-visibility: visible;
+  }
+}
+
 /* Route transition */
 
 @keyframes ez-route-progress {

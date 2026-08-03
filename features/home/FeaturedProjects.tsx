@@ -16,6 +16,8 @@ type FeaturedProjectsSceneProps = {
   progress: MotionValue<number>;
 };
 
+const layerKeepAliveOpacity = 0.012;
+
 type CardMotion = {
   x: number;
   y: number;
@@ -204,7 +206,7 @@ const titleBlur = useTransform(
   const buttonOpacity = useTransform(
   progress,
   [0.56, 0.82],
-  shouldReduceMotion ? [1, 1] : [0, 1],
+  shouldReduceMotion ? [1, 1] : [layerKeepAliveOpacity, 1],
 );
 
 const buttonY = useTransform(
@@ -293,7 +295,7 @@ const buttonBlur = useTransform(
       "tracking-[-0.04em]",
       "text-[var(--color-text-secondary)]",
 
-      "lg:text-[clamp(2rem,4vw,4.5rem)]",
+      "lg:text-[clamp(1.8rem,2.5vw,3.2rem)]",
       "lg:leading-[0.94]",
       "lg:tracking-[-0.055em]",
       "[@media(min-width:900px)_and_(max-width:1100px)_and_(max-height:700px)]:!text-[1.7rem]",
@@ -371,8 +373,12 @@ const buttonBlur = useTransform(
             style={{
               opacity: buttonOpacity,
               y: buttonY,
+              scale: buttonScale,
+              filter: buttonBlur,
             }}
            className={[
+  "transform-gpu [backface-visibility:hidden]",
+  "will-change-[transform,opacity,filter]",
   "mt-[clamp(24px,4vh,60px)]",
 
   "[@media(max-width:390px)_and_(max-height:720px)]:mt-3",
@@ -389,7 +395,7 @@ const buttonBlur = useTransform(
               href="/work"
               transitionIntent="from-works"
               className={[
-                "group relative isolate",
+                "ez-glass-control group relative isolate",
                 "inline-flex items-center justify-center",
                 "overflow-hidden rounded-full",
                 "border border-black/[0.10]",

@@ -49,6 +49,17 @@ const layoutClasses: Record<
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
+export const splitSectionTitleClassName = [
+  "text-[1.8rem]",
+  "[font-family:var(--font-geist-sans)]",
+  "font-medium leading-[0.95]",
+  "tracking-[-0.04em]",
+  "text-[var(--color-text-secondary)]",
+  "md:text-[2.6rem]",
+  "lg:text-[clamp(1.8rem,2.5vw,3.2rem)]",
+  "[@media(min-width:768px)_and_(max-width:1180px)]:!text-[2.6rem]",
+].join(" ");
+
 export default function SplitSection({
   id,
   title,
@@ -133,19 +144,7 @@ export default function SplitSection({
             }}
             className="lg:pt-4 lg:text-right"
           >
-            <h2
-  className={[
-    "text-[1.8rem]",
-    "font-medium leading-[0.95]",
-    "tracking-[-0.04em]",
-    "text-[var(--color-text-secondary)]",
-
-    "md:text-[2.6rem]",
-    "lg:text-[clamp(1.8rem,2.5vw,3.2rem)]",
-
-    "[@media(min-width:768px)_and_(max-width:1180px)]:!text-[2.6rem]",
-  ].join(" ")}
->
+            <h2 className={splitSectionTitleClassName}>
               {title}
             </h2>
           </motion.div>

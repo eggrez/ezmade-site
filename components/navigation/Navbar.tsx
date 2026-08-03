@@ -32,6 +32,7 @@ type ActiveButton = "contact" | "works" | "about" | null;
 
 const ease = [0.22, 1, 0.36, 1] as const;
 const routeBlurEase = [0.22, 1, 0.36, 1] as const;
+const layerKeepAliveOpacity = 0.012;
 
 const visibleRouteNavbar = {
   opacity: 1,
@@ -39,7 +40,12 @@ const visibleRouteNavbar = {
 } as const;
 
 const hiddenRouteNavbar = {
-  opacity: 0,
+  /*
+   * Keep the glass controls on their compositor layer while hidden.
+   * At opacity: 0 browsers can discard an individual backdrop-filter
+   * layer and paint the button back in a single sharp frame.
+   */
+  opacity: layerKeepAliveOpacity,
   filter: "blur(24px)",
 } as const;
  
@@ -178,7 +184,7 @@ export default function Navbar({
   const navigationOpacity = useTransform(
     navigationProgress,
     [navigationEnterStart, navigationEnterEnd],
-    [0, 1],
+    [layerKeepAliveOpacity, 1],
     { clamp: true },
   );
 
@@ -276,7 +282,7 @@ export default function Navbar({
   }
 
   const utilityClass = [
-    "group relative isolate",
+    "ez-glass-control group relative isolate",
     "inline-flex items-center justify-center",
     "overflow-hidden rounded-full",
     "border border-black/[0.07]",
@@ -341,7 +347,7 @@ export default function Navbar({
   ].join(" ");
 
   const ctaClass = [
-    "group relative isolate",
+    "ez-glass-control group relative isolate",
     "inline-flex items-center justify-center",
     "overflow-hidden rounded-full",
     "text-sm font-normal leading-none",
@@ -465,7 +471,8 @@ export default function Navbar({
     "px-[clamp(24px,4vw,72px)]",
 "[@media(max-width:430px)]:px-5",
     "py-[clamp(14px,1.35vw,20px)]",
-    "will-change-[opacity,filter]",
+    "transform-gpu [backface-visibility:hidden]",
+    "will-change-[transform,opacity,filter]",
   ]
     .filter(Boolean)
     .join(" ");

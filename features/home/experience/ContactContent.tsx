@@ -20,6 +20,7 @@ import type { HomeSceneProps } from "./types";
 
 
 const ease = [0.22, 1, 0.36, 1] as const;
+const layerKeepAliveOpacity = 0.012;
 
 
 const socialLinks = [
@@ -79,7 +80,7 @@ const textareaClass = [
 
 
 const socialLinkClass = [
-  "relative isolate inline-flex items-center justify-center",
+  "ez-glass-control relative isolate inline-flex items-center justify-center",
   "overflow-hidden",
   "rounded-full",
   "border border-white/70",
@@ -159,7 +160,7 @@ const [activeSocialIndex, setActiveSocialIndex] =
   const rightOpacity = useTransform(
     progress,
     [0.07, 0.89],
-    [0, 1],
+    [layerKeepAliveOpacity, 1],
   );
 
 
@@ -173,7 +174,7 @@ const [activeSocialIndex, setActiveSocialIndex] =
   const contactDetailsOpacity = useTransform(
     progress,
     [0.15, 0.97],
-    [0, 1],
+    [layerKeepAliveOpacity, 1],
   );
 
 
@@ -271,6 +272,7 @@ const [activeSocialIndex, setActiveSocialIndex] =
         "px-[clamp(24px,4vw,72px)]",
         "pt-24",
 "pb-4",
+"[@media(width:414px)_and_(orientation:portrait)]:!pt-[5.25rem]",
 
 "[@media(max-width:380px)_and_(max-height:700px)]:pt-[5rem]",
 "[@media(max-width:380px)_and_(max-height:700px)]:pb-6",
@@ -283,6 +285,7 @@ const [activeSocialIndex, setActiveSocialIndex] =
           "mx-auto grid w-full max-w-[2200px] content-start",
 "lg:h-full lg:content-stretch",
           "grid-cols-1 gap-8",
+          "[@media(width:414px)_and_(orientation:portrait)]:!gap-5",
           "lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]",
 "[@media(min-width:900px)_and_(max-width:1100px)]:grid-cols-1",
 
@@ -344,6 +347,8 @@ const [activeSocialIndex, setActiveSocialIndex] =
                 : contactDetailsY,
             }}
           className={[
+  "transform-gpu [backface-visibility:hidden]",
+  "will-change-[transform,opacity]",
   "shrink-0 pt-8",
 
   "[@media(max-width:380px)_and_(max-height:700px)]:pt-5",
@@ -443,7 +448,7 @@ const [activeSocialIndex, setActiveSocialIndex] =
                 : rightOpacity,
               y: shouldReduceMotion ? 0 : rightY,
             }}
-            className="min-w-0"
+            className="min-w-0 transform-gpu [backface-visibility:hidden] will-change-[transform,opacity]"
           >
             <AnimatePresence mode="wait">
               {!isSubmitted ? (
@@ -474,6 +479,8 @@ const [activeSocialIndex, setActiveSocialIndex] =
                 <div
  className={[
   "mt-3 mb-4",
+  "[@media(width:414px)_and_(orientation:portrait)]:!mt-3",
+"[@media(width:414px)_and_(orientation:portrait)]:!mb-5",
 
   "[@media(max-width:380px)_and_(max-height:700px)]:!mt-2",
   "[@media(max-width:380px)_and_(max-height:700px)]:!mb-2",
@@ -565,7 +572,7 @@ const [activeSocialIndex, setActiveSocialIndex] =
 </div>
 
 
-                    <div className="mt-7 [@media(max-width:380px)_and_(max-height:700px)]:mt-4 sm:mt-12 [@media(min-width:700px)_and_(max-width:900px)]:!mt-8 [@media(min-width:900px)_and_(max-width:1100px)_and_(max-height:700px)]:!mt-5">
+                   <div className="mt-7 [@media(width:414px)_and_(orientation:portrait)]:!mt-5 [@media(max-width:380px)_and_(max-height:700px)]:mt-4 sm:mt-12 [@media(min-width:700px)_and_(max-width:900px)]:!mt-8 [@media(min-width:900px)_and_(max-width:1100px)_and_(max-height:700px)]:!mt-5">
                       <label
                         htmlFor="project"
                         className="sr-only"
