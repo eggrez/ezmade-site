@@ -14,6 +14,7 @@ import {
   useState,
 } from "react";
 import { createPortal } from "react-dom";
+import { usePathname } from "next/navigation";
 
 import { usePageTransition } from "@/components/transitions/PageTransitionProvider";
 import TransitionLink from "@/components/transitions/TransitionLink";
@@ -95,8 +96,16 @@ export default function Navbar({
   progress,
   onNavigate,
 }: NavbarProps) {
+  const pathname = usePathname();
   const isHome = variant === "home";
   const isProject = variant === "project";
+
+  /*
+   * Force a fresh blur reveal whenever the route changes.
+   * This also covers native browser Back/Forward navigation,
+   * where the transition providers may not have started first.
+   */
+  const routeRevealKey = `${pathname}:${variant}`;
 
   const activeRouteNavbarRevealTransition = isProject
     ? projectRouteNavbarRevealTransition
@@ -117,6 +126,9 @@ export default function Navbar({
     isProjectTransitioning;
 
   const [portalTarget, setPortalTarget] = useState<HTMLElement | null>(null);
+  const [isMobileViewport, setIsMobileViewport] = useState<boolean | null>(
+    null,
+  );
   const [activeButton, setActiveButton] = useState<ActiveButton>(null);
 
 
@@ -132,7 +144,20 @@ export default function Navbar({
    * position: fixed relative to the viewport on every route.
    */
   useEffect(() => {
+    const mobileMediaQuery = window.matchMedia("(max-width: 767px)");
+
+    const syncMobileViewport = () => {
+      setIsMobileViewport(mobileMediaQuery.matches);
+    };
+
+    syncMobileViewport();
     setPortalTarget(document.body);
+
+    mobileMediaQuery.addEventListener("change", syncMobileViewport);
+
+    return () => {
+      mobileMediaQuery.removeEventListener("change", syncMobileViewport);
+    };
   }, []);
 
   /*
@@ -559,7 +584,7 @@ export default function Navbar({
     </>
   );
 
-  if (!portalTarget) {
+  if (!portalTarget || isMobileViewport === null) {
     return null;
   }
 
@@ -580,6 +605,29 @@ export default function Navbar({
       "bg-transparent",
     ].join(" ")}
   >
+    <motion.div
+      key={isMobileViewport ? routeRevealKey : "desktop-navbar"}
+      initial={
+        shouldReduceMotion || !isMobileViewport
+          ? false
+          : hiddenRouteNavbar
+      }
+      animate={
+        isMobileViewport
+          ? routeNavbarState
+          : visibleRouteNavbar
+      }
+      transition={
+        isMobileViewport
+          ? routeNavbarTransition
+          : { duration: 0 }
+      }
+      className={[
+        "relative w-full",
+        "transform-gpu [backface-visibility:hidden]",
+        "will-change-[opacity,filter]",
+      ].join(" ")}
+    >
       <motion.div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0"
@@ -590,24 +638,40 @@ export default function Navbar({
       >
        <motion.div
   initial={
-    shouldReduceMotion
+    shouldReduceMotion || isMobileViewport
       ? false
       : hiddenRouteSurface
   }
-  animate={routeSurfaceState}
-  transition={routeSurfaceTransition}
+  animate={
+    isMobileViewport
+      ? visibleRouteSurface
+      : routeSurfaceState
+  }
+  transition={
+    isMobileViewport
+      ? { duration: 0 }
+      : routeSurfaceTransition
+  }
   className={navigationSurfaceClassName}
 />
       </motion.div>
 
       <motion.nav
   initial={
-    shouldReduceMotion
+    shouldReduceMotion || isMobileViewport
       ? false
       : hiddenRouteNavbar
   }
-  animate={routeNavbarState}
-  transition={routeNavbarTransition}
+  animate={
+    isMobileViewport
+      ? visibleRouteNavbar
+      : routeNavbarState
+  }
+  transition={
+    isMobileViewport
+      ? { duration: 0 }
+      : routeNavbarTransition
+  }
   aria-label="Primary navigation"
   className={navigationBarClassName}
 >
@@ -738,6 +802,7 @@ export default function Navbar({
           </div>
         </motion.div>
       </motion.nav>
+    </motion.div>
     </motion.header>,
     portalTarget,
   );
