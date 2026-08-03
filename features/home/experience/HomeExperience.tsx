@@ -606,7 +606,7 @@ export default function HomeExperience() {
           className={[
             "sticky top-0",
             "h-svh w-full",
-            "[@media(width:414px)_and_(orientation:portrait)]:!h-[calc(100svh+2px)]",
+            "[@media(width:414px)_and_(orientation:portrait)]:!h-[calc(100dvh+2px)]",
             "overflow-hidden",
             "bg-[var(--color-bg)]",
           ].join(" ")}
