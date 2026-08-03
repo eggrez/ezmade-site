@@ -64,6 +64,8 @@ type OverlayState = {
   mode: OverlayMode;
   phase: OverlayPhase;
 
+  mobileLight: boolean;
+
   slug: string;
   image: string;
   title: string;
@@ -112,6 +114,12 @@ const FORWARD_EXPAND_DURATION =
 
 const FORWARD_EXIT_DURATION =
   750;
+
+const MOBILE_FORWARD_ROUTE_DURATION =
+  2550;
+
+const MOBILE_FORWARD_EXIT_DURATION =
+  1850;
 
 const REVERSE_COVER_DURATION =
   900;
@@ -388,7 +396,12 @@ export default function ProjectTransitionProvider({
           return;
         }
 
-        clearTimers();
+         clearTimers();
+
+        const mobileLight =
+          window.matchMedia(
+            "(max-width: 767px)",
+          ).matches;
 
         const nextOrigin: ProjectOrigin =
           {
@@ -408,8 +421,10 @@ export default function ProjectTransitionProvider({
         const nextOverlay: OverlayState =
           {
             mode: "forward",
-            phase:
+             phase:
               "forward-expanding",
+
+            mobileLight,
 
             slug,
             image,
@@ -478,7 +493,9 @@ export default function ProjectTransitionProvider({
                 scroll: false,
               },
             );
-          }, FORWARD_EXPAND_DURATION);
+       }, mobileLight
+            ? MOBILE_FORWARD_ROUTE_DURATION
+            : FORWARD_EXPAND_DURATION);
       },
       [
         clearTimers,
@@ -539,8 +556,10 @@ export default function ProjectTransitionProvider({
         const nextOverlay: OverlayState =
           {
             mode: "reverse",
-            phase:
+                        phase:
               "reverse-covering",
+
+            mobileLight: false,
 
             slug:
               transitionSlug,
@@ -714,7 +733,9 @@ export default function ProjectTransitionProvider({
                   null;
 
                 setOverlay(null);
-              }, FORWARD_EXIT_DURATION);
+                }, overlay.mobileLight
+                ? MOBILE_FORWARD_EXIT_DURATION
+                : FORWARD_EXIT_DURATION);
           });
       });
   }, [
@@ -913,110 +934,185 @@ export default function ProjectTransitionProvider({
     isMounted && overlay
       ? createPortal(
     <>
-      {overlay.mode ===
-        "forward" && (
-        <div
-          aria-hidden="true"
-          className={[
-            "pointer-events-auto fixed left-0 top-0",
-            "z-[2147483647]",
-            "w-screen overflow-hidden",
-            "cursor-default select-none touch-none",
-            "md:hidden",
-          ].join(" ")}
-          style={{
-            height:
-              "calc(100dvh + 2px)",
+          {overlay.mode ===
+              "forward" &&
+              overlay.mobileLight && (
+              <div
+                aria-hidden="true"
+                className={[
+                  "pointer-events-auto fixed left-0 top-0",
+                  "z-[2147483647]",
+                  "w-screen overflow-hidden",
+                  "cursor-default select-none touch-none",
+                  "md:hidden",
+                ].join(" ")}
+                style={{
+                  height:
+                    "calc(100dvh + 2px)",
 
-            WebkitBackdropFilter:
-              overlay.phase ===
-              "forward-leaving"
-                ? "blur(0px)"
-                : "blur(16px)",
+                  WebkitBackdropFilter:
+                    overlay.expanded &&
+                    overlay.phase !==
+                      "forward-leaving"
+                      ? "blur(14px)"
+                      : "blur(0px)",
 
-            backdropFilter:
-              overlay.phase ===
-              "forward-leaving"
-                ? "blur(0px)"
-                : "blur(16px)",
+                  backdropFilter:
+                    overlay.expanded &&
+                    overlay.phase !==
+                      "forward-leaving"
+                      ? "blur(14px)"
+                      : "blur(0px)",
 
-            transition:
-              "backdrop-filter 720ms cubic-bezier(0.22,1,0.36,1), -webkit-backdrop-filter 720ms cubic-bezier(0.22,1,0.36,1)",
-          }}
-        >
-          {/* Светлый фон */}
-          <div
-            className="absolute inset-0 bg-[var(--color-bg)]"
-            style={{
-              opacity:
-                overlay.expanded &&
-                overlay.visible
-                  ? 1
-                  : 0,
+                  transition: [
+                    `backdrop-filter ${
+                      overlay.phase ===
+                      "forward-leaving"
+                        ? 1650
+                        : 1150
+                    }ms cubic-bezier(0.37,0,0.63,1)`,
 
-              transition:
-                overlay.phase ===
-                "forward-leaving"
-                  ? "opacity 620ms 100ms cubic-bezier(0.22,1,0.36,1)"
-                  : "opacity 320ms cubic-bezier(0.22,1,0.36,1)",
-            }}
-          />
+                    `-webkit-backdrop-filter ${
+                      overlay.phase ===
+                      "forward-leaving"
+                        ? 1650
+                        : 1150
+                    }ms cubic-bezier(0.37,0,0.63,1)`,
+                  ].join(", "),
+                }}
+              >
+                {/* Светлый фон */}
+                <div
+                  className="absolute inset-0 bg-[var(--color-bg)]"
+                  style={{
+                    opacity:
+                      overlay.expanded &&
+                      overlay.visible
+                        ? 1
+                        : 0,
 
-          {/* Стабильная область знака */}
-          <div
-            className={[
-              "absolute left-0 top-0",
-              "flex h-svh w-full",
-              "items-center justify-center",
-              "px-6",
-            ].join(" ")}
-          >
-            <img
-              src="/images/logo-mark.svg"
-              alt=""
-              draggable={false}
-              className={[
-                "block h-[4.8rem] w-[4.8rem]",
-                "select-none transform-gpu",
-                "will-change-[opacity,filter,transform]",
-              ].join(" ")}
-              style={{
-                opacity:
-                  overlay.expanded &&
-                  overlay.visible
-                    ? 1
-                    : 0,
+                    transition:
+                      overlay.phase ===
+                      "forward-leaving"
+                        ? "opacity 1450ms 260ms cubic-bezier(0.37,0,0.63,1)"
+                        : "opacity 650ms cubic-bezier(0.22,1,0.36,1)",
+                  }}
+                />
 
-                filter:
-                  overlay.expanded &&
-                  overlay.visible
-                    ? "blur(0px)"
-                    : "blur(18px)",
+                {/* Стабильная область знака */}
+                <div
+                  className={[
+                    "absolute left-0 top-0",
+                    "flex h-svh w-full",
+                    "items-center justify-center",
+                    "px-6",
+                  ].join(" ")}
+                >
+                  <div
+                    className={[
+                      "relative h-[4.8rem] w-[4.8rem]",
+                      "transform-gpu",
+                      "will-change-[opacity,filter,transform]",
+                    ].join(" ")}
+                    style={{
+                      opacity:
+                        overlay.expanded &&
+                        overlay.visible
+                          ? 1
+                          : 0,
 
-                transform:
-                  overlay.expanded &&
-                  overlay.visible
-                    ? "scale(1)"
-                    : "scale(0.96)",
+                      filter:
+                        overlay.expanded &&
+                        overlay.visible
+                          ? "blur(0px)"
+                          : overlay.phase ===
+                              "forward-leaving"
+                            ? "blur(24px)"
+                            : "blur(22px)",
 
-                transition:
-                  overlay.phase ===
-                  "forward-leaving"
-                    ? [
-                        "opacity 420ms cubic-bezier(0.22,1,0.36,1)",
-                        "filter 560ms cubic-bezier(0.22,1,0.36,1)",
-                        "transform 560ms cubic-bezier(0.22,1,0.36,1)",
-                      ].join(", ")
-                    : [
-                        "opacity 520ms 150ms cubic-bezier(0.22,1,0.36,1)",
-                        "filter 720ms 120ms cubic-bezier(0.16,1,0.3,1)",
-                        "transform 720ms 120ms cubic-bezier(0.16,1,0.3,1)",
-                      ].join(", "),
-              }}
-            />
-          </div>
-        </div>
-      )}
+                      transform:
+                        overlay.expanded &&
+                        overlay.visible
+                          ? "scale(1)"
+                          : overlay.phase ===
+                              "forward-leaving"
+                            ? "scale(1.045)"
+                            : "scale(0.97)",
+
+                      transition:
+                        overlay.phase ===
+                        "forward-leaving"
+                          ? [
+                              "opacity 1050ms cubic-bezier(0.37,0,0.63,1)",
+                              "filter 1450ms cubic-bezier(0.22,1,0.36,1)",
+                              "transform 1450ms cubic-bezier(0.22,1,0.36,1)",
+                            ].join(", ")
+                          : [
+                              "opacity 1100ms 320ms cubic-bezier(0.22,1,0.36,1)",
+                              "filter 1350ms 260ms cubic-bezier(0.16,1,0.3,1)",
+                              "transform 1350ms 260ms cubic-bezier(0.16,1,0.3,1)",
+                            ].join(", "),
+                    }}
+                  >
+                    {/* Обводка */}
+                    <svg
+                      aria-hidden="true"
+                      viewBox="0 0 64 64"
+                      className="absolute inset-0 h-full w-full overflow-visible text-black"
+                    >
+                      <path
+                        d="M44.851 64h15.13C62.201 64 64 62.209 64 60V44.851L44.851 64Z"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.15"
+                        vectorEffect="non-scaling-stroke"
+                      />
+
+                      <path
+                        d="M64 39.181V4c0-2.209-1.799-4-4.019-4H4.019C1.799 0 0 1.791 0 4v55.999C0 62.209 1.799 64 4.019 64h35.162L64 39.181Z"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.15"
+                        vectorEffect="non-scaling-stroke"
+                      />
+                    </svg>
+
+                    {/* Чёрная заливка */}
+                    <svg
+                      aria-hidden="true"
+                      viewBox="0 0 64 64"
+                      className="absolute inset-0 h-full w-full text-black will-change-[clip-path]"
+                      style={{
+                        WebkitClipPath:
+                          overlay.expanded
+                            ? "inset(0% 0% 0% 0%)"
+                            : "inset(50% 50% 50% 50%)",
+
+                        clipPath:
+                          overlay.expanded
+                            ? "inset(0% 0% 0% 0%)"
+                            : "inset(50% 50% 50% 50%)",
+
+                        transition: [
+                          "clip-path 1000ms 1050ms cubic-bezier(0.16,1,0.3,1)",
+                          "-webkit-clip-path 1000ms 1050ms cubic-bezier(0.16,1,0.3,1)",
+                        ].join(", "),
+                      }}
+                    >
+                      <path
+                        d="M44.851 64h15.13C62.201 64 64 62.209 64 60V44.851L44.851 64Z"
+                        fill="currentColor"
+                      />
+
+                      <path
+                        d="M64 39.181V4c0-2.209-1.799-4-4.019-4H4.019C1.799 0 0 1.791 0 4v55.999C0 62.209 1.799 64 4.019 64h35.162L64 39.181Z"
+                        fill="currentColor"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            )}
 
       <div
         aria-hidden="true"
@@ -1029,10 +1125,11 @@ export default function ProjectTransitionProvider({
   "select-none",
   "touch-none",
   "will-change-[top,left,width,height,opacity,transform,border-radius]",
-overlay.mode === "forward"
-  ? "hidden md:block"
-  : "",
-overlay.expanded
+              overlay.mode ===
+              "forward"
+                ? "hidden md:block"
+                : "",
+              overlay.expanded
     ? [
         "h-svh",
         "[@media(width:414px)_and_(orientation:portrait)]:!h-[calc(100dvh+2px)]",
