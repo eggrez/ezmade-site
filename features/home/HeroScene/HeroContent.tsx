@@ -82,18 +82,16 @@ export default function HeroContent({
       }
     };
 
-    const updateGlassPlayback = (value: number) => {
-      shouldPlayGlassVideo = value >= 0.16 && value <= 0.74;
+   const updateGlassPlayback = (value: number) => {
+  shouldPlayGlassVideo = value <= 0.74;
 
-      if (!shouldPlayGlassVideo) {
-        glassVideo.pause();
-        return;
-      }
+  if (!shouldPlayGlassVideo) {
+    glassVideo.pause();
+    return;
+  }
 
-      
-
-      syncGlassVideo();
-    };
+  syncGlassVideo();
+};
 
     const intervalId = window.setInterval(syncGlassVideo, 800);
     const unsubscribeProgress = progress.on("change", updateGlassPlayback);
@@ -429,16 +427,17 @@ export default function HeroContent({
             style={logoMaskStyle}
           >
             <motion.video
-              ref={glassVideoRef}
-              src={HERO_VIDEO_SRC}
-              muted
-              loop
-              playsInline
-              preload="none"
-              style={{
-                x: innerCloudX,
-                y: innerCloudY,
-              }}
+  ref={glassVideoRef}
+  src={HERO_VIDEO_SRC}
+  autoPlay
+  muted
+  loop
+  playsInline
+  preload="auto"
+  style={{
+    x: innerCloudX,
+    y: innerCloudY,
+  }}
               className={[
                 "absolute",
                 "left-1/2 top-1/2",
@@ -454,6 +453,10 @@ export default function HeroContent({
                 "transform-gpu",
               ].join(" ")}
             />
+            <div
+  aria-hidden="true"
+  className="ez-ios-wordmark-haze absolute -inset-[5%]"
+/>
 
             {/* Лёгкая молочная дымка, но не белая заливка */}
             <div
