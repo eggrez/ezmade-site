@@ -26,12 +26,13 @@ export default function HeroContent({
   const shouldReduceMotion = useReducedMotion();
   const backgroundVideoRef = useRef<HTMLVideoElement>(null);
   const glassVideoRef = useRef<HTMLVideoElement>(null);
-  const mobileViewportTargetY = useMotionValue(0);
-  const mobileViewportY = useSpring(mobileViewportTargetY, {
-    stiffness: 180,
-    damping: 26,
-    mass: 0.4,
-  });
+ const mobileViewportTargetY = useMotionValue(0);
+
+const mobileViewportY = useSpring(mobileViewportTargetY, {
+  stiffness: 120,
+  damping: 26,
+  mass: 0.7,
+});
 
   /*
    * iOS Safari grows the visible viewport in small steps while its bottom
@@ -74,10 +75,10 @@ export default function HeroContent({
 
       previousWidth = currentWidth;
 
-      const centredOffset = (currentHeight - baselineHeight) / 2;
-      const safeOffset = Math.max(-64, Math.min(64, centredOffset));
+     const viewportOffset = (currentHeight - baselineHeight) * 0.2;
+const safeOffset = Math.max(-24, Math.min(24, viewportOffset));
 
-      mobileViewportTargetY.set(safeOffset);
+mobileViewportTargetY.set(safeOffset);
     };
 
     const scheduleUpdate = () => {
@@ -236,35 +237,35 @@ export default function HeroContent({
 
   const introMarkFilter = useMotionTemplate`blur(${introMarkBlur}px)`;
 
-  const wordmarkOpacity = useTransform(
+ const wordmarkOpacity = useTransform(
   progress,
-  [0, 0.26, 0.32, 0.4, 0.61, 0.7],
-  [0, 0, 0.12, 1, 1, 0],
+  [0, 0.18, 0.4, 0.61, 0.7],
+  [0, 0, 1, 1, 0],
 );
 
 const wordmarkScale = useTransform(
   progress,
-  [0.26, 0.4, 0.7],
+  [0.22, 0.36, 0.7],
   [0.992, 1, 1.006],
 );
 
 const wordmarkY = useTransform(
   progress,
-  [0.26, 0.4, 0.7],
+  [0.22, 0.36, 0.7],
   [5, 0, -3],
 );
 
 const wordmarkBlur = useTransform(
   progress,
-  [0, 0.26, 0.32, 0.4, 0.61, 0.7],
+  [0, 0.22, 0.28, 0.36, 0.61, 0.7],
   [18, 18, 8, 0, 0, 12],
 );
 
-  const wordmarkBrightness = useTransform(
-    progress,
-    [0.2, 0.3, 0.38, 0.52, 0.62],
-    [0.98, 1.04, 1.1, 1.04, 0.98],
-  );
+const wordmarkBrightness = useTransform(
+  progress,
+  [0.18, 0.28, 0.36, 0.52, 0.62],
+  [0.98, 1.04, 1.1, 1.04, 0.98],
+);
 
   const wordmarkFilter =
     useMotionTemplate`blur(${wordmarkBlur}px) brightness(${wordmarkBrightness})`;

@@ -40,6 +40,11 @@ const visibleRouteNavbar = {
   filter: "blur(0px)",
 } as const;
 
+const visibleRouteLayer = {
+  opacity: 1,
+  filter: "none",
+} as const;
+
 const hiddenRouteNavbar = {
   /*
    * Keep the glass controls on their compositor layer while hidden.
@@ -208,6 +213,12 @@ export default function Navbar({
     (!isTransitioning && isMobileRouteRevealReady)
       ? visibleRouteNavbar
       : hiddenRouteNavbar;
+
+      const routeLayerState =
+  shouldReduceMotion ||
+  (!isTransitioning && isMobileRouteRevealReady)
+    ? visibleRouteLayer
+    : hiddenRouteNavbar;
 
   const routeSurfaceState =
     shouldReduceMotion ||
@@ -544,22 +555,22 @@ export default function Navbar({
     .join(" ");
 
   const navigationSurfaceClassName = [
-    "absolute inset-0",
+  "absolute inset-0",
 
-    "border-b border-black/[0.025]",
+  "border-b border-white/[0.34]",
 
-    "bg-[rgba(243,245,244,0.28)]",
-    "supports-[backdrop-filter]:bg-[rgba(243,245,244,0.16)]",
+  "bg-[rgba(250,250,250,0.72)]",
+  "supports-[backdrop-filter]:bg-[rgba(250,250,250,0.46)]",
 
-    "backdrop-blur-[10px]",
-    "backdrop-saturate-[1.05]",
+  "backdrop-blur-[24px]",
+  "backdrop-saturate-[1.18]",
 
-    isProject
-      ? "shadow-[inset_0_1px_0_rgba(255,255,255,0.28),0_8px_30px_rgba(17,17,17,0.025)]"
-      : "shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_6px_24px_rgba(17,17,17,0.012)]",
+  isProject
+    ? "shadow-[inset_0_1px_0_rgba(255,255,255,0.58),0_10px_36px_rgba(17,17,17,0.055)]"
+    : "shadow-[inset_0_1px_0_rgba(255,255,255,0.42),0_8px_30px_rgba(17,17,17,0.025)]",
 
-    "will-change-[opacity]",
-  ].join(" ");
+  "will-change-[opacity]",
+].join(" ");
 
   const ctaContent = (
     <>
@@ -642,21 +653,20 @@ export default function Navbar({
           ? false
           : hiddenRouteNavbar
       }
-      animate={
-        isMobileViewport
-          ? routeNavbarState
-          : visibleRouteNavbar
-      }
+     animate={
+  isMobileViewport
+    ? routeLayerState
+    : visibleRouteLayer
+}
       transition={
         isMobileViewport
           ? routeNavbarTransition
           : { duration: 0 }
       }
       className={[
-        "relative w-full",
-        "transform-gpu [backface-visibility:hidden]",
-        "will-change-[opacity,filter]",
-      ].join(" ")}
+  "relative w-full",
+  "[backface-visibility:hidden]",
+].join(" ")}
     >
       <motion.div
         aria-hidden="true"
