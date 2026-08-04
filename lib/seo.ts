@@ -1,7 +1,7 @@
 ﻿import type { Metadata } from "next";
 
 export const SITE_NAME = "EZ";
-export const SITE_TITLE = "EZ Production вЂ” Made easy.";
+export const SITE_TITLE = "EZ — Made easy.";
 export const SITE_DESCRIPTION =
   "Creative production studio for direction, editing, color grading, sound design and 3D. Made easy.";
 
