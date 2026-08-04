@@ -19,7 +19,6 @@ type ProjectCardProps = {
   project: Project;
   variant?: "default" | "editorial";
   index?: number;
-  priority?: boolean;
 };
 
 const ease = [0.22, 1, 0.36, 1] as const;
@@ -28,7 +27,6 @@ export default function ProjectCard({
   project,
   variant = "default",
   index = 0,
-  priority,
 }: ProjectCardProps) {
   const shouldReduceMotion =
     useReducedMotion();
@@ -125,7 +123,6 @@ export default function ProjectCard({
         shouldReduceMotion={
           shouldReduceMotion
         }
-        priority={priority ?? index === 0}
         onClick={handleClick}
       />
     );
@@ -196,7 +193,7 @@ export default function ProjectCard({
           cover={cover}
           title={project.title}
           imageScale={1.035}
-          priority={priority ?? index === 0}
+          priority={index === 0}
         />
 
         <CardEffects />
@@ -227,8 +224,6 @@ type EditorialProjectCardProps = {
     | boolean
     | null;
 
-  priority: boolean;
-
   onClick: (
     event: MouseEvent<HTMLAnchorElement>,
   ) => void;
@@ -243,7 +238,6 @@ function EditorialProjectCard({
   allowHover,
   isTransitioning,
   shouldReduceMotion,
-  priority,
   onClick,
 }: EditorialProjectCardProps) {
   const isEven =
@@ -441,7 +435,7 @@ function EditorialProjectCard({
               cover={cover}
               title={project.title}
               imageScale={1.045}
-              priority={priority}
+              priority={index === 0}
             />
 
             <CardEffects />
