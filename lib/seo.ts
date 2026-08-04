@@ -6,7 +6,7 @@ export const SITE_DESCRIPTION =
   "Creative production studio for direction, editing, color grading, sound design and 3D. Made easy.";
 
 export const SITE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://ezprdct.com"
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://ezmade.pro"
 ).replace(/\/+$/, "");
 
 export const DEFAULT_SOCIAL_IMAGE =
