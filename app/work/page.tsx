@@ -3,12 +3,14 @@ import type { Metadata } from "next";
 import Navbar from "@/components/navigation/Navbar";
 import WorkPortfolio from "@/components/work/WorkPortfolio";
 import { projects } from "@/lib/projects";
+import { createPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Work — EZ Production",
+export const metadata: Metadata = createPageMetadata({
+  title: "Selected Work",
   description:
-    "Explore direction, color grading, editing, sound design and 3D work by EZ Production.",
-};
+    "Explore selected direction, color grading, editing, sound design and 3D work by EZ Production.",
+  path: "/work",
+});
 
 export default function WorkPage() {
   return (

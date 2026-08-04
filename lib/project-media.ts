@@ -271,4 +271,4 @@ export function getProjectGalleryItems(slug: string): ProjectGalleryItem[] {
     src: resolveProjectImagePath(slug, item.filename),
     layout: item.layout,
   }));
-} 
+}

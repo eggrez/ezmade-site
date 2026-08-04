@@ -9,6 +9,7 @@ import {
   getDisciplineBySlug,
 } from "@/lib/disciplines";
 import { projects } from "@/lib/projects";
+import { createPageMetadata } from "@/lib/seo";
 
 type DisciplinePageProps = {
   params: Promise<{
@@ -29,15 +30,19 @@ export async function generateMetadata({
   const discipline = getDisciplineBySlug(slug);
 
   if (!discipline) {
-    return {
-      title: "Work not found — EZ Production",
-    };
+    return createPageMetadata({
+      title: "Work not found",
+      description: "The requested work category could not be found.",
+      path: `/work/${slug}`,
+      noIndex: true,
+    });
   }
 
-  return {
-    title: `${discipline.title} — EZ Production`,
+  return createPageMetadata({
+    title: discipline.title,
     description: `Selected ${discipline.title.toLowerCase()} work by EZ Production.`,
-  };
+    path: `/work/${discipline.slug}`,
+  });
 }
 
 export default async function DisciplinePage({

@@ -1,7 +1,17 @@
+import type { Metadata } from "next";
+
 import Navbar from "@/components/navigation/Navbar";
 import ProjectCard from "@/components/projects/ProjectCard";
 import Reveal from "@/components/motion/Reveal";
 import { projects } from "@/lib/projects";
+import { createPageMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = createPageMetadata({
+  title: "Projects",
+  description: "Selected projects by EZ Production.",
+  path: "/work",
+  noIndex: true,
+});
 
 export default function ProjectsPage() {
   return (

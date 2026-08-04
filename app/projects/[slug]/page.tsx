@@ -14,6 +14,10 @@ import {
   getProjectBySlug,
   projects,
 } from "@/lib/projects";
+import {
+  createPageMetadata,
+  makeMetaDescription,
+} from "@/lib/seo";
 
 type ProjectPageProps = {
   params: Promise<{
@@ -38,16 +42,24 @@ export async function generateMetadata({
     getProjectBySlug(slug);
 
   if (!project) {
-    return {
-      title: "Project — EZ",
-    };
+    return createPageMetadata({
+      title: "Project not found",
+      description: "The requested project could not be found.",
+      path: `/projects/${slug}`,
+      noIndex: true,
+    });
   }
 
-  return {
-    title: `${project.title} — EZ`,
-    description:
-      project.description,
-  };
+  const description = makeMetaDescription(project.description);
+  const cover = getProjectCover(project.slug);
+
+  return createPageMetadata({
+    title: project.title,
+    description,
+    path: `/projects/${project.slug}`,
+    image: cover,
+    imageAlt: `${project.title} — ${project.category} by EZ Production`,
+  });
 }
 
 export default async function ProjectPage({
