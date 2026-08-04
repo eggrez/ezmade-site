@@ -52,9 +52,11 @@ export function createPageMetadata({
 }: PageMetadataOptions): Metadata {
   const socialTitle = `${title} вЂ” ${SITE_NAME}`;
 
-  return {
-    title,
-    description,
+ return {
+  title: {
+    absolute: SITE_TITLE,
+  },
+  description,
     alternates: {
       canonical: path,
     },
