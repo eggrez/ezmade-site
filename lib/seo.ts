@@ -1,7 +1,7 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 
-export const SITE_NAME = "EZ Production";
-export const SITE_TITLE = "EZ Production — Made easy.";
+export const SITE_NAME = "EZ";
+export const SITE_TITLE = "EZ Production вЂ” Made easy.";
 export const SITE_DESCRIPTION =
   "Creative production studio for direction, editing, color grading, sound design and 3D. Made easy.";
 
@@ -29,8 +29,8 @@ export function makeMetaDescription(description: string, maxLength = 160) {
 
   return `${candidate
     .slice(0, boundary)
-    .replace(/[,:;—-]+$/u, "")
-    .trim()}…`;
+    .replace(/[,:;вЂ”-]+$/u, "")
+    .trim()}вЂ¦`;
 }
 
 type PageMetadataOptions = {
@@ -50,7 +50,7 @@ export function createPageMetadata({
   imageAlt = `${SITE_NAME} selected work`,
   noIndex = false,
 }: PageMetadataOptions): Metadata {
-  const socialTitle = `${title} — ${SITE_NAME}`;
+  const socialTitle = `${title} вЂ” ${SITE_NAME}`;
 
   return {
     title,
@@ -88,3 +88,4 @@ export function createPageMetadata({
       : {}),
   };
 }
+
