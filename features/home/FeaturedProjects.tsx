@@ -295,7 +295,7 @@ const buttonBlur = useTransform(
       "tracking-[-0.04em]",
       "text-[var(--color-text-secondary)]",
 
-      "lg:text-[clamp(1.8rem,2.5vw,3.2rem)]",
+      "lg:text-[clamp(2rem,4vw,4.5rem)]",
       "lg:leading-[0.94]",
       "lg:tracking-[-0.055em]",
       "[@media(min-width:900px)_and_(max-width:1100px)_and_(max-height:700px)]:!text-[1.7rem]",
