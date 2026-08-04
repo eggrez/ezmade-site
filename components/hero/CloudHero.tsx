@@ -156,7 +156,7 @@ export default function CloudHero() {
 
       <div className="cloudHero__content">
         <header className="cloudHero__navigation">
-          <a className="cloudHero__brand" href="/" aria-label="EZ Production">
+          <a className="cloudHero__brand" href="/" aria-label="EZ">
             EZ PRODUCTION
           </a>
 
