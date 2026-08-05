@@ -29,8 +29,8 @@ export function makeMetaDescription(description: string, maxLength = 160) {
 
   return `${candidate
     .slice(0, boundary)
-    .replace(/[,:;вЂ”-]+$/u, "")
-    .trim()}вЂ¦`;
+    .replace(/[,:;—-]+$/u, "")
+    .trim()}…`;
 }
 
 type PageMetadataOptions = {
@@ -50,13 +50,13 @@ export function createPageMetadata({
   imageAlt = `${SITE_NAME} selected work`,
   noIndex = false,
 }: PageMetadataOptions): Metadata {
-  const socialTitle = `${title} вЂ” ${SITE_NAME}`;
+  const socialTitle = `${title} — ${SITE_NAME}`;
 
- return {
-  title: {
-    absolute: SITE_TITLE,
-  },
-  description,
+  return {
+    title: {
+      absolute: SITE_TITLE,
+    },
+    description,
     alternates: {
       canonical: path,
     },
@@ -90,4 +90,3 @@ export function createPageMetadata({
       : {}),
   };
 }
-
