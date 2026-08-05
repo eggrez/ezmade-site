@@ -278,15 +278,26 @@ const buttonBlur = useTransform(
     filter: titleBlur,
   }}
   className={[
-    "text-left",
-    "will-change-[transform,opacity,filter]",
-    "lg:pt-3",
-    "lg:text-right",
-    "[@media(min-width:1024px)_and_(max-width:1180px)]:!pt-0",
-"[@media(min-width:1024px)_and_(max-width:1180px)]:!text-left",
-"[@media(min-width:900px)_and_(max-width:1100px)_and_(max-height:700px)]:!pt-0",
-"[@media(min-width:900px)_and_(max-width:1100px)_and_(max-height:700px)]:!text-left",
-  ].join(" ")}
+  "relative",
+  "text-left",
+  "will-change-[transform,opacity,filter]",
+
+  "lg:w-[300px]",
+  "lg:justify-self-start",
+  "lg:right-10",
+  "lg:pt-3",
+  "lg:text-right",
+
+  "[@media(min-width:1024px)_and_(max-width:1180px)]:!w-auto",
+  "[@media(min-width:1024px)_and_(max-width:1180px)]:!right-0",
+  "[@media(min-width:1024px)_and_(max-width:1180px)]:!pt-0",
+  "[@media(min-width:1024px)_and_(max-width:1180px)]:!text-left",
+
+  "[@media(min-width:900px)_and_(max-width:1100px)_and_(max-height:700px)]:!w-auto",
+  "[@media(min-width:900px)_and_(max-width:1100px)_and_(max-height:700px)]:!right-0",
+  "[@media(min-width:900px)_and_(max-width:1100px)_and_(max-height:700px)]:!pt-0",
+  "[@media(min-width:900px)_and_(max-width:1100px)_and_(max-height:700px)]:!text-left",
+].join(" ")}
 >
   <h2
     className={[
