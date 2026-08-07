@@ -30,7 +30,7 @@ const socialLinks = [
   },
   {
     title: "Instagram",
-    href: "https://www.instagram.com/ez.prdct",
+    href: "https://www.instagram.com/ezmade.pro",
   },
   {
     title: "Behance",
