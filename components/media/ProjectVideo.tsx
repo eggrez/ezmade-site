@@ -13,9 +13,15 @@ import {
   useMemo,
   useRef,
   useState,
+  useSyncExternalStore,
 } from "react";
 
 import ProjectImage from "@/components/media/ProjectImage";
+import { playbackErrorMessage, prefersNativeVideoControls, requestVideoPlayback } from "@/lib/video-playback";
+
+const subscribeToDevice = () => () => {};
+const getNativeControls = () => prefersNativeVideoControls(navigator);
+const getServerNativeControls = () => false;
 
 type ProjectVideoProps = {
   src: string;
@@ -137,19 +143,33 @@ export default function ProjectVideo({
       null,
     );
 
-  const attemptedHighQualityRef =
-    useRef(false);
-
     
 
-const surfaceTouchStartRef =
-  useRef<{
-    x: number;
-    y: number;
-  } | null>(null);
+  const nativeDevice = useSyncExternalStore(subscribeToDevice, getNativeControls, getServerNativeControls);
+  const [nativeFallback, setNativeFallback] = useState(false);
+  const useNativeControls = nativeDevice || nativeFallback;
+  const [playbackError, setPlaybackError] = useState<string | null>(null);
+  const [isBuffering, setIsBuffering] = useState(false);
+  const [slowLoading, setSlowLoading] = useState(false);
+  const [shouldPreload, setShouldPreload] = useState(false);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container || !src) return;
+    // Prepare only the nearby player, rather than downloading every film on the page.
+    const observer = new IntersectionObserver((entries) => {
+      if (entries.some((entry) => entry.isIntersecting)) {
+        setShouldPreload(true);
+        observer.disconnect();
+      }
+    }, { rootMargin: "200px" });
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, [src]);
 
   const [activeSource, setActiveSource] =
     useState(src);
+  const [previousSource, setPreviousSource] = useState(src);
 
   const [isPlaying, setIsPlaying] =
     useState(false);
@@ -184,6 +204,29 @@ const surfaceTouchStartRef =
     isSwitchingQuality,
     setIsSwitchingQuality,
   ] = useState(false);
+
+  const handlePlaybackFailure = useCallback((error: { name?: string; code?: number }) => {
+    const message = playbackErrorMessage(error);
+    if (!message) return;
+    setPlaybackError(message);
+    setIsBuffering(false);
+    isPlayingRef.current = false;
+    setIsPlaying(false);
+    setIsControlsVisible(true);
+    if (error.name === "NotAllowedError") setNativeFallback(true);
+  }, []);
+
+  if (previousSource !== src) {
+    setPreviousSource(src);
+    setActiveSource(src);
+    setIsReady(false);
+    setShowPoster(true);
+    setPlaybackError(null);
+    setIsBuffering(false);
+    setSlowLoading(false);
+    setCurrentTime(0);
+    setDuration(0);
+  }
 
   const progress =
     duration > 0
@@ -264,30 +307,29 @@ const surfaceTouchStartRef =
     [activeSource],
   );
 
-  const togglePlayback =
-    useCallback(() => {
-      const element = videoRef.current;
+  const startPlayback = useCallback((retry = false) => {
+    const element = videoRef.current;
+    if (!element) return;
+    setPlaybackError(null);
+    setSlowLoading(false);
+    setIsBuffering(true);
+    element.muted = isMuted;
+    element.volume = volume;
+    void requestVideoPlayback(element, retry).catch(handlePlaybackFailure);
+  }, [handlePlaybackFailure, isMuted, volume]);
 
-      if (!element) {
-        return;
-      }
+  const togglePlayback = useCallback(() => {
+    const element = videoRef.current;
+    if (!element) return;
+    if (element.paused) startPlayback();
+    else element.pause();
+  }, [startPlayback]);
 
-      if (element.paused) {
-        element.muted = isMuted;
-        element.volume = volume;
-
-        void element
-          .play()
-          .catch(() => {
-            isPlayingRef.current =
-              false;
-
-            setIsPlaying(false);
-          });
-      } else {
-        element.pause();
-      }
-    }, [isMuted, volume]);
+  useEffect(() => {
+    if (!isBuffering) return;
+    const timer = setTimeout(() => setSlowLoading(true), 15000);
+    return () => clearTimeout(timer);
+  }, [isBuffering]);
 
   const toggleMute = useCallback(() => {
     const element = videoRef.current;
@@ -503,20 +545,6 @@ const surfaceTouchStartRef =
     showControls();
   }
 
-  /*
-   * Когда React меняет activeSource,
-   * принудительно перезагружаем video.
-   */
-  useEffect(() => {
-    const element = videoRef.current;
-
-    if (!element || !activeSource) {
-      return;
-    }
-
-    element.load();
-  }, [activeSource]);
-
   useEffect(() => {
     const currentVideo =
       videoRef.current;
@@ -527,14 +555,6 @@ const surfaceTouchStartRef =
 
     const element: HTMLVideoElement =
       currentVideo;
-
-    element.muted = false;
-    element.volume = 1;
-
-    previousVolumeRef.current = 1;
-
-    setIsMuted(false);
-    setVolume(1);
 
     function restoreAfterSourceSwitch() {
       const pending =
@@ -584,16 +604,24 @@ const surfaceTouchStartRef =
       if (pending.shouldResume) {
         void element
           .play()
-          .catch(() => {
-            isPlayingRef.current =
-              false;
-
-            setIsPlaying(false);
-          });
+          .catch(handlePlaybackFailure);
       }
     }
 
+    function handlePlaying() {
+      setIsReady(true);
+      setPlaybackError(null);
+      setIsBuffering(false);
+      setSlowLoading(false);
+    }
+
+    function handleWaiting() {
+      if (!element.paused) setIsBuffering(true);
+    }
+
     function handlePlay() {
+      setPlaybackError(null);
+      setIsBuffering(element.readyState < 3);
       isPlayingRef.current = true;
 
       setIsPlaying(true);
@@ -604,6 +632,8 @@ const surfaceTouchStartRef =
     }
 
     function handlePause() {
+      setIsBuffering(false);
+      setSlowLoading(false);
       isPlayingRef.current = false;
 
       setIsPlaying(false);
@@ -660,6 +690,8 @@ const surfaceTouchStartRef =
     }
 
     function handleCanPlay() {
+      setIsBuffering(false);
+      setSlowLoading(false);
       setIsReady(true);
 
       if (
@@ -689,6 +721,7 @@ const surfaceTouchStartRef =
       }
 
       setIsSwitchingQuality(false);
+      handlePlaybackFailure(element.error || {});
     }
 
     function handleEnded() {
@@ -711,6 +744,9 @@ const surfaceTouchStartRef =
       onEnded?.();
     }
 
+    element.addEventListener("playing", handlePlaying);
+    element.addEventListener("waiting", handleWaiting);
+    element.addEventListener("stalled", handleWaiting);
     element.addEventListener(
       "play",
       handlePlay,
@@ -762,6 +798,9 @@ const surfaceTouchStartRef =
     );
 
     return () => {
+      element.removeEventListener("playing", handlePlaying);
+      element.removeEventListener("waiting", handleWaiting);
+      element.removeEventListener("stalled", handleWaiting);
       element.removeEventListener(
         "play",
         handlePlay,
@@ -814,6 +853,7 @@ const surfaceTouchStartRef =
     };
   }, [
     activeSource,
+    handlePlaybackFailure,
     clearControlsTimer,
     resolvedHighQualitySrc,
     scheduleControlsHide,
@@ -888,10 +928,6 @@ const surfaceTouchStartRef =
 }, []);
 
   useEffect(() => {
-    setActiveSource(src);
-  }, [src]);
-
-  useEffect(() => {
     return () => {
       clearControlsTimer();
     };
@@ -922,11 +958,8 @@ const surfaceTouchStartRef =
 
     void element
       .play()
-      .catch(() => {
-        isPlayingRef.current = false;
-        setIsPlaying(false);
-      });
-  }, [autoPlayRequest, isActive]);
+      .catch(handlePlaybackFailure);
+  }, [autoPlayRequest, handlePlaybackFailure, isActive]);
 
   if (!src) {
     return (
@@ -996,16 +1029,18 @@ const surfaceTouchStartRef =
         poster={poster}
         muted={isMuted}
         playsInline
-        preload="metadata"
+        controls={useNativeControls}
+        preload={shouldPreload ? "metadata" : "none"}
+        aria-label={title}
         className={[
-          "pointer-events-none",
+          useNativeControls ? "pointer-events-auto" : "pointer-events-none",
           "h-full w-full",
 
           isFullscreen
             ? "object-contain"
             : "object-cover",
 
-          isReady
+          isReady || useNativeControls
             ? "opacity-100"
             : "opacity-0",
 
@@ -1013,7 +1048,8 @@ const surfaceTouchStartRef =
         ].join(" ")}
       />
 
-      {/* Reliable interaction surface above inline video */}
+      {!useNativeControls && <>
+      {/* A click retains browser user activation and supports keyboard input. */}
       <button
         type="button"
         aria-label={
@@ -1021,61 +1057,10 @@ const surfaceTouchStartRef =
             ? `Pause ${title}`
             : `Play ${title}`
         }
-       onPointerDown={(event) => {
-  if (event.pointerType === "touch") {
-    return;
-  }
-
-  event.preventDefault();
-  event.stopPropagation();
-
-  togglePlayback();
-}}
-onTouchStart={(event) => {
-  const touch =
-    event.changedTouches[0];
-
-  if (!touch) {
-    return;
-  }
-
-  surfaceTouchStartRef.current = {
-    x: touch.clientX,
-    y: touch.clientY,
-  };
-}}
-onTouchEnd={(event) => {
-  const touch =
-    event.changedTouches[0];
-
-  const start =
-    surfaceTouchStartRef.current;
-
-  surfaceTouchStartRef.current =
-    null;
-
-  if (!touch || !start) {
-    return;
-  }
-
-  const distance = Math.hypot(
-    touch.clientX - start.x,
-    touch.clientY - start.y,
-  );
-
-  if (distance > 12) {
-    return;
-  }
-
-  event.preventDefault();
-  event.stopPropagation();
-
-  togglePlayback();
-}}
-onTouchCancel={() => {
-  surfaceTouchStartRef.current =
-    null;
-}}
+        onClick={(event) => {
+          event.stopPropagation();
+          togglePlayback();
+        }}
         className={[
           "absolute inset-0 z-20",
           "cursor-pointer touch-manipulation",
@@ -1553,6 +1538,32 @@ onTouchCancel={() => {
           </IconControl>
         </div>
       </motion.div>
+      </>}
+
+      {isBuffering && !useNativeControls && !playbackError && (
+        <div role="status" className="pointer-events-none absolute left-1/2 top-1/2 z-40 -translate-x-1/2 -translate-y-1/2 rounded-full bg-black/60 px-4 py-2 text-sm text-white">
+          Loading video…
+        </div>
+      )}
+      {(playbackError || (isBuffering && slowLoading)) && (
+        <div role="alert" className="absolute inset-x-3 top-3 z-50 mx-auto max-w-md rounded-xl border border-white/20 bg-black/85 p-4 text-center text-sm text-white">
+          <p>{playbackError || "The video is taking longer than usual to load."}</p>
+          <div className="mt-3 flex flex-wrap justify-center gap-4">
+            <button type="button" className="underline underline-offset-4" onClick={(event) => {
+              event.stopPropagation();
+              startPlayback(true);
+            }}>Try again</button>
+            {!useNativeControls && <button type="button" className="underline underline-offset-4" onClick={(event) => {
+              event.stopPropagation();
+              setNativeFallback(true);
+              setPlaybackError(null);
+              setIsBuffering(false);
+              setSlowLoading(false);
+            }}>Browser controls</button>}
+            <a href={activeSource} target="_blank" rel="noopener noreferrer" className="underline underline-offset-4">Open video</a>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

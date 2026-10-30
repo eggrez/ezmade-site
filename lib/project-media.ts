@@ -65,7 +65,7 @@ const projectMedia: Record<string, ProjectMediaConfig> = {
       label: "Film 03",
     },
     {
-      src: "video_4.mp4",
+      src: "video-04-web-v1.mp4",
       poster: "cover_4.jpg",
       label: "Film 04",
     },
@@ -114,7 +114,7 @@ const projectMedia: Record<string, ProjectMediaConfig> = {
   },
   higgsfield: {
     cover: "cover.jpg",
-    videos: [{ src: "video.mp4" }],
+    videos: [{ src: "video-web-v1.mp4" }],
     gallery: [
       { filename: "01.jpg", layout: "wide" },
       { filename: "02.jpg", layout: "half" },
@@ -190,7 +190,7 @@ const projectMedia: Record<string, ProjectMediaConfig> = {
     cover: "cover.jpg",
     videos: [
       {
-        src: "video_v2.mp4",
+        src: "video-web-v1.mp4",
         poster: "cover.jpg",
       },
     ],

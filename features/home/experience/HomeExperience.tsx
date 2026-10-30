@@ -65,11 +65,6 @@ const sceneRevealTransition = {
   },
 } as const;
 
-const initialHomeRevealTransition = {
-  opacity: { duration: 0.5, ease: transitionEase },
-  filter: { duration: 0.7, ease: blurEase },
-} as const;
-
 function getExternalSceneTarget(): HomeNavigationTarget | null {
   if (typeof window === "undefined") {
     return null;
@@ -419,7 +414,7 @@ export default function HomeExperience() {
      * сохраняем локальный blur → focus.
      */
     sceneControls.set(
-      shouldReduceMotion || managedRequestId !== null
+      shouldReduceMotion || managedRequestId !== null || target === "hero"
         ? visibleSceneState
         : hiddenSceneState,
     );
@@ -493,10 +488,10 @@ export default function HomeExperience() {
         sceneControls.set(visibleSceneState);
         completedManagedEntryIdRef.current = managedRequestId;
         markHomeReady(managedRequestId);
-      } else {
+      } else if (target !== "hero") {
         await sceneControls.start({
           ...visibleSceneState,
-          transition: target === "hero" ? initialHomeRevealTransition : sceneRevealTransition,
+          transition: sceneRevealTransition,
         });
       }
 
