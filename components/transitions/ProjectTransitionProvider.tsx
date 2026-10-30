@@ -1,5 +1,8 @@
 "use client";
 
+import { useReducedMotion } from "framer-motion";
+import BrandTransitionOverlay, { BRAND_COVER_DURATION, BRAND_EXIT_DURATION } from "./BrandTransitionOverlay";
+
 import {
   createContext,
   type ReactNode,
@@ -64,7 +67,6 @@ type OverlayState = {
   mode: OverlayMode;
   phase: OverlayPhase;
 
- mobileLight: boolean;
 
   slug: string;
   image: string;
@@ -82,6 +84,7 @@ type OverlayState = {
 
 type ProjectTransitionContextValue = {
   isTransitioning: boolean;
+  isContentReady: boolean;
 
   startProjectTransition: (
     options: StartProjectTransitionOptions,
@@ -109,28 +112,7 @@ const ProjectTransitionContext =
 const STORAGE_KEY =
   "ez-project-origin";
 
-const FORWARD_EXPAND_DURATION =
-  1100;
-
-const FORWARD_EXIT_DURATION =
-  750;
-
-const MOBILE_FORWARD_ROUTE_DURATION =
-  2550;
-
-const MOBILE_FORWARD_EXIT_DURATION =
-  1850;
-
-  
-
-const REVERSE_COVER_DURATION =
-  900;
-
-const REVERSE_ROUTE_WAIT =
-  180;
-
-const REVERSE_EXIT_DURATION =
-  1100;
+const REVERSE_ROUTE_WAIT = 180;
 
 export function useProjectTransition() {
   const context = useContext(
@@ -195,6 +177,7 @@ export default function ProjectTransitionProvider({
 }: ProjectTransitionProviderProps) {
   const router =
     useRouter();
+  const shouldReduceMotion = useReducedMotion() ?? false;
 
   const pathname =
     usePathname();
@@ -405,10 +388,6 @@ export default function ProjectTransitionProvider({
 
          clearTimers();
 
-        const mobileLight =
-          window.matchMedia(
-            "(max-width: 767px)",
-          ).matches;
 
         const nextOrigin: ProjectOrigin =
           {
@@ -431,7 +410,6 @@ export default function ProjectTransitionProvider({
              phase:
               "forward-expanding",
 
-           mobileLight,
 
 slug,
             image,
@@ -500,15 +478,14 @@ slug,
                 scroll: false,
               },
             );
-      }, mobileLight
-  ? MOBILE_FORWARD_ROUTE_DURATION
-  : FORWARD_EXPAND_DURATION);
+      }, shouldReduceMotion ? 0 : BRAND_COVER_DURATION);
       },
       [
         clearTimers,
         pathname,
         router,
         saveOrigin,
+        shouldReduceMotion,
       ],
     );
 
@@ -566,7 +543,6 @@ slug,
                         phase:
               "reverse-covering",
 
-            mobileLight: false,
 
 slug:
               transitionSlug,
@@ -667,13 +643,14 @@ slug:
                 scroll: false,
               },
             );
-          }, REVERSE_COVER_DURATION);
+          }, shouldReduceMotion ? 0 : BRAND_COVER_DURATION);
 
         return true;
       },
       [
         clearTimers,
         origin,
+        shouldReduceMotion,
         pathname,
         router,
       ],
@@ -740,13 +717,12 @@ slug:
                   null;
 
                 setOverlay(null);
-                }, overlay.mobileLight
-                ? MOBILE_FORWARD_EXIT_DURATION
-                : FORWARD_EXIT_DURATION);
+                }, shouldReduceMotion ? 0 : BRAND_EXIT_DURATION);
           });
       });
   }, [
     overlay,
+    shouldReduceMotion,
     pathname,
   ]);
 
@@ -831,8 +807,8 @@ slug:
 
                     setOverlay(null);
                     clearOrigin();
-                  }, REVERSE_EXIT_DURATION);
-              }, REVERSE_ROUTE_WAIT);
+                  }, shouldReduceMotion ? 0 : BRAND_EXIT_DURATION);
+              }, shouldReduceMotion ? 0 : REVERSE_ROUTE_WAIT);
           });
       });
   }, [
@@ -840,6 +816,7 @@ slug:
     origin?.sourcePathname,
     overlay,
     pathname,
+    shouldReduceMotion,
   ]);
 
   /*
@@ -937,395 +914,22 @@ slug:
     };
   }, [clearTimers]);
 
-  const overlayElement =
-    isMounted && overlay
-      ? createPortal(
-    <>
-          {overlay.mode ===
-              "forward" &&
-              overlay.mobileLight && (
-              <div
-                aria-hidden="true"
-                className={[
-                  "pointer-events-auto fixed left-0 top-0",
-                  "z-[2147483647]",
-                  "w-screen overflow-hidden",
-                  "cursor-default select-none touch-none",
-                  "md:hidden",
-                ].join(" ")}
-                style={{
-  height:
-    "calc(100dvh + 2px)",
-}}
-              >
-                {/* Светлый фон */}
-                <div
-                  className="absolute inset-0 bg-[var(--color-bg)]"
-                 style={{
-  opacity:
-    overlay.expanded &&
-    overlay.visible
-      ? 1
-      : 0,
-
-  transition:
-    overlay.phase ===
-    "forward-leaving"
-      ? "opacity 1450ms 260ms cubic-bezier(0.37,0,0.63,1)"
-      : "none",
-}}
-                />
-
-                {/* Стабильная область знака */}
-                <div
-                  className={[
-                    "absolute left-0 top-0",
-                    "flex h-svh w-full",
-                    "items-center justify-center",
-                    "px-6",
-                  ].join(" ")}
-                >
-                  <div
-                    className={[
-                      "relative h-[4.8rem] w-[4.8rem]",
-                      "transform-gpu",
-                      "will-change-[opacity,filter,transform]",
-                    ].join(" ")}
-                    style={{
-                      opacity:
-                        overlay.expanded &&
-                        overlay.visible
-                          ? 1
-                          : 0,
-
-                      filter:
-                        overlay.expanded &&
-                        overlay.visible
-                          ? "blur(0px)"
-                          : overlay.phase ===
-                              "forward-leaving"
-                            ? "blur(24px)"
-                            : "blur(22px)",
-
-                      transform:
-                        overlay.expanded &&
-                        overlay.visible
-                          ? "scale(1)"
-                          : overlay.phase ===
-                              "forward-leaving"
-                            ? "scale(1.045)"
-                            : "scale(0.97)",
-
-                      transition:
-                        overlay.phase ===
-                        "forward-leaving"
-                          ? [
-                              "opacity 1050ms cubic-bezier(0.37,0,0.63,1)",
-                              "filter 1450ms cubic-bezier(0.22,1,0.36,1)",
-                              "transform 1450ms cubic-bezier(0.22,1,0.36,1)",
-                            ].join(", ")
-                          : [
-                              "opacity 1100ms 320ms cubic-bezier(0.22,1,0.36,1)",
-                              "filter 1350ms 260ms cubic-bezier(0.16,1,0.3,1)",
-                              "transform 1350ms 260ms cubic-bezier(0.16,1,0.3,1)",
-                            ].join(", "),
-                    }}
-                  >
-                    {/* Обводка */}
-                    <svg
-                      aria-hidden="true"
-                      viewBox="0 0 64 64"
-                      className="absolute inset-0 h-full w-full overflow-visible text-black"
-                    >
-                      <path
-                        d="M44.851 64h15.13C62.201 64 64 62.209 64 60V44.851L44.851 64Z"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.15"
-                        vectorEffect="non-scaling-stroke"
-                      />
-
-                      <path
-                        d="M64 39.181V4c0-2.209-1.799-4-4.019-4H4.019C1.799 0 0 1.791 0 4v55.999C0 62.209 1.799 64 4.019 64h35.162L64 39.181Z"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.15"
-                        vectorEffect="non-scaling-stroke"
-                      />
-                    </svg>
-
-                    {/* Чёрная заливка */}
-                    <svg
-                      aria-hidden="true"
-                      viewBox="0 0 64 64"
-                      className="absolute inset-0 h-full w-full text-black will-change-[clip-path]"
-                     style={{
-  WebkitClipPath:
-    overlay.expanded
-      ? "polygon(-100% -100%, 300% -100%, -100% 300%)"
-      : "polygon(-100% -100%, 100% -100%, -100% 100%)",
-
-  clipPath:
-    overlay.expanded
-      ? "polygon(-100% -100%, 300% -100%, -100% 300%)"
-      : "polygon(-100% -100%, 100% -100%, -100% 100%)",
-
-  transition: [
-    "clip-path 1000ms 1050ms cubic-bezier(0.16,1,0.3,1)",
-    "-webkit-clip-path 1000ms 1050ms cubic-bezier(0.16,1,0.3,1)",
-  ].join(", "),
-}}
-                    >
-                      <path
-                        d="M44.851 64h15.13C62.201 64 64 62.209 64 60V44.851L44.851 64Z"
-                        fill="currentColor"
-                      />
-
-                      <path
-                        d="M64 39.181V4c0-2.209-1.799-4-4.019-4H4.019C1.799 0 0 1.791 0 4v55.999C0 62.209 1.799 64 4.019 64h35.162L64 39.181Z"
-                        fill="currentColor"
-                      />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-            )}
-
-      <div
-        aria-hidden="true"
-        className={[
-  "pointer-events-auto fixed",
-  "z-[2147483647]",
-  "overflow-hidden",
-  "bg-neutral-200",
-  "cursor-default",
-  "select-none",
-  "touch-none",
-  "will-change-[top,left,width,height,opacity,transform,border-radius]",
-              overlay.mode ===
-              "forward"
-                ? "hidden md:block"
-                : "",
-              overlay.expanded
-    ? [
-        "h-svh",
-        "[@media(width:414px)_and_(orientation:portrait)]:!h-[calc(100dvh+2px)]",
-      ].join(" ")
-    : "",
-].join(" ")}
-            style={{
-              top:
-                overlay.expanded
-                  ? 0
-                  : overlay.rect.top,
-
-              left:
-                overlay.expanded
-                  ? 0
-                  : overlay.rect.left,
-
-              width:
-                overlay.expanded
-                  ? "100vw"
-                  : overlay.rect.width,
-
-              height:
-  overlay.expanded
-    ? undefined
-    : overlay.rect.height,
-
-              borderRadius:
-                overlay.expanded
-                  ? 0
-                  : 2,
-
-              opacity:
-                overlay.visible
-                  ? 1
-                  : 0,
-
-              transform:
-                overlay.phase ===
-                "forward-leaving"
-                  ? "scale(1.025)"
-                  : overlay.phase ===
-                      "reverse-leaving"
-                    ? "scale(1.018)"
-                    : "scale(1)",
-
-              transition: [
-                `top ${FORWARD_EXPAND_DURATION}ms cubic-bezier(0.22,1,0.36,1)`,
-                `left ${FORWARD_EXPAND_DURATION}ms cubic-bezier(0.22,1,0.36,1)`,
-                `width ${FORWARD_EXPAND_DURATION}ms cubic-bezier(0.22,1,0.36,1)`,
-                `height ${FORWARD_EXPAND_DURATION}ms cubic-bezier(0.22,1,0.36,1)`,
-                `border-radius ${FORWARD_EXPAND_DURATION}ms cubic-bezier(0.22,1,0.36,1)`,
-
-                `opacity ${
-                  overlay.mode ===
-                  "reverse"
-                    ? REVERSE_EXIT_DURATION
-                    : FORWARD_EXIT_DURATION
-                }ms cubic-bezier(0.22,1,0.36,1)`,
-
-                `transform ${
-                  overlay.mode ===
-                  "reverse"
-                    ? REVERSE_EXIT_DURATION
-                    : FORWARD_EXIT_DURATION
-                }ms cubic-bezier(0.22,1,0.36,1)`,
-              ].join(", "),
-            }}
-          >
-            {overlay.image ? (
-              <img
-                src={overlay.image}
-                alt=""
-                draggable={false}
-                decoding="sync"
-                fetchPriority="high"
-                className="absolute inset-0 h-full w-full select-none object-cover"
-                style={{
-                  transform:
-                    overlay.expanded
-                      ? "scale(1.045)"
-                      : "scale(1)",
-
-                  transition:
-                    "transform 1500ms cubic-bezier(0.22,1,0.36,1)",
-
-                  backfaceVisibility:
-                    "hidden",
-
-                  WebkitBackfaceVisibility:
-                    "hidden",
-                }}
-              />
-            ) : (
-              <div className="absolute inset-0 bg-neutral-200" />
-            )}
-
-            <div
-              aria-hidden="true"
-              className="absolute inset-0 bg-black"
-              style={{
-                opacity:
-                  overlay.expanded &&
-                  overlay.visible
-                    ? overlay.mode ===
-                      "reverse"
-                      ? 0.16
-                      : 0.12
-                    : 0,
-
-                transition:
-                  "opacity 750ms cubic-bezier(0.22,1,0.36,1)",
-              }}
-            />
-
-            <div
-              aria-hidden="true"
-              className={[
-                "absolute -left-[60%] top-[-80%]",
-                "h-[270%] w-[42%]",
-                "rotate-[18deg]",
-                "bg-gradient-to-r",
-                "from-transparent via-white/30 to-transparent",
-                "blur-2xl",
-                "mix-blend-screen",
-              ].join(" ")}
-              style={{
-                opacity:
-                  overlay.expanded &&
-                  overlay.visible &&
-                  overlay.phase !==
-                    "reverse-leaving"
-                    ? 0.24
-                    : 0,
-
-                transform:
-                  overlay.expanded
-                    ? "translateX(430%) rotate(18deg)"
-                    : "translateX(-20%) rotate(18deg)",
-
-                transition: [
-                  "transform 2600ms cubic-bezier(0.22,1,0.36,1)",
-                  "opacity 500ms cubic-bezier(0.22,1,0.36,1)",
-                ].join(", "),
-              }}
-            />
-
-            <p
-              className={[
-                "absolute",
-                "bottom-[clamp(24px,4vw,72px)]",
-                "left-[clamp(24px,4vw,72px)]",
-                "max-w-[86vw]",
-                "text-[clamp(2.8rem,8vw,9rem)]",
-                "font-medium leading-[0.86]",
-                "tracking-[-0.075em]",
-                "text-white",
-              ].join(" ")}
-              style={{
-                opacity:
-                  overlay.expanded &&
-                  overlay.visible &&
-                  overlay.phase !==
-                    "reverse-leaving"
-                    ? 1
-                    : 0,
-
-                transform:
-                  overlay.expanded &&
-                  overlay.visible &&
-                  overlay.phase !==
-                    "reverse-leaving"
-                    ? "translateY(0)"
-                    : "translateY(18px)",
-
-                filter:
-                  overlay.expanded &&
-                  overlay.visible &&
-                  overlay.phase !==
-                    "reverse-leaving"
-                    ? "blur(0px)"
-                    : "blur(6px)",
-
-                transition:
-                  [
-                    "opacity 620ms cubic-bezier(0.22,1,0.36,1)",
-                    "transform 620ms cubic-bezier(0.22,1,0.36,1)",
-                    "filter 620ms cubic-bezier(0.22,1,0.36,1)",
-                  ].join(", "),
-              }}
-            >
-              {overlay.title}
-            </p>
-
-            <div
-              aria-hidden="true"
-              className="absolute inset-[1px] border border-white/35"
-              style={{
-                opacity:
-                  overlay.expanded &&
-                  overlay.visible
-                    ? 0
-                    : 0.7,
-
-                transition:
-                  "opacity 650ms cubic-bezier(0.22,1,0.36,1)",
-              }}
-            />
-                    </div>
-        </>,
-        document.body,
-        )
-      : null;
+  const overlayElement = isMounted && overlay ? createPortal(
+    <BrandTransitionOverlay
+      expanded={overlay.expanded && (overlay.visible || overlay.phase.endsWith("leaving"))}
+      leaving={overlay.phase.endsWith("leaving")}
+      reducedMotion={shouldReduceMotion}
+    />,
+    document.body,
+  ) : null;
 
   return (
     <ProjectTransitionContext.Provider
       value={{
         isTransitioning:
           overlay !== null,
+        isContentReady:
+          overlay === null || overlay.phase.endsWith("leaving"),
 
         startProjectTransition,
 

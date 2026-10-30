@@ -1,5 +1,8 @@
 "use client";
 
+import { createPortal } from "react-dom";
+import BrandTransitionOverlay, { BRAND_COVER_DURATION, BRAND_EXIT_DURATION } from "./BrandTransitionOverlay";
+
 import { motion, useAnimationControls, useReducedMotion } from "framer-motion";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -63,8 +66,6 @@ const PageTransitionContext = createContext<PageTransitionContextValue | null>(
   null,
 );
 
-const transitionEase = [0.22, 1, 0.36, 1] as const;
-const blurEase = [0.4, 0, 0.2, 1] as const;
 const transitionBlur = "blur(18px)";
 const hiddenOpacity = 0.012;
 
@@ -84,28 +85,6 @@ const hiddenState = {
    */
   opacity: hiddenOpacity,
   filter: transitionBlur,
-} as const;
-
-const exitTransition = {
-  opacity: {
-    duration: 0.46,
-    ease: transitionEase,
-  },
-  filter: {
-    duration: 0.58,
-    ease: blurEase,
-  },
-} as const;
-
-const revealTransition = {
-  opacity: {
-    duration: 0.92,
-    ease: transitionEase,
-  },
-  filter: {
-    duration: 1.16,
-    ease: blurEase,
-  },
 } as const;
 
 function getIntentHomeTarget(
@@ -262,6 +241,23 @@ export default function PageTransitionProvider({
   const [homeEntry, setHomeEntry] = useState<HomeEntryRequest | null>(null);
 
   const [homeEntryPhase, setHomeEntryPhase] = useState<HomeEntryPhase>("idle");
+  const [brandTransition, setBrandTransition] = useState<{ expanded: boolean; leaving: boolean } | null>(null);
+  const isBrandTransitioning = brandTransition !== null;
+
+  useEffect(() => {
+    if (!isBrandTransitioning) return;
+    const html = document.documentElement;
+    const body = document.body;
+    const previousHtml = html.style.overflow;
+    const previousBody = body.style.overflow;
+    html.style.overflow = "hidden";
+    body.style.overflow = "hidden";
+    return () => {
+      html.style.overflow = previousHtml;
+      body.style.overflow = previousBody;
+    };
+  }, [isBrandTransitioning]);
+
 
   const transitionIdRef = useRef(0);
   const transitionLockRef = useRef(false);
@@ -307,10 +303,20 @@ export default function PageTransitionProvider({
       return;
     }
 
-    await controls.start({
-      ...hiddenState,
-      transition: exitTransition,
-    });
+    setBrandTransition({ expanded: false, leaving: false });
+    await waitForFrames(2);
+    setBrandTransition({ expanded: true, leaving: false });
+    await new Promise<void>((resolve) => window.setTimeout(resolve, BRAND_COVER_DURATION));
+    controls.set(hiddenState);
+  }, [controls, shouldReduceMotion]);
+
+  const revealContent = useCallback(async () => {
+    controls.set(visibleState);
+    if (!shouldReduceMotion) {
+      setBrandTransition({ expanded: true, leaving: true });
+      await new Promise<void>((resolve) => window.setTimeout(resolve, BRAND_EXIT_DURATION));
+    }
+    setBrandTransition(null);
   }, [controls, shouldReduceMotion]);
 
   const revealRoute = useCallback(async () => {
@@ -339,26 +345,14 @@ export default function PageTransitionProvider({
       await waitForFrames(2);
     }
 
-    if (shouldReduceMotion) {
-      controls.set(visibleState);
-    } else {
-      /*
-       * animateOut уже оставил persistent wrapper ровно в hiddenState.
-       * Не вызываем controls.set() ещё раз: повторная запись filter на
-       * первом кадре нового route и создавала заметный стык.
-       */
-      await controls.start({
-        ...visibleState,
-        transition: revealTransition,
-      });
-    }
+    await revealContent();
 
     releaseScrollLock();
 
     setIsTransitioning(false);
     transitionLockRef.current = false;
     revealLockRef.current = false;
-  }, [controls, releaseScrollLock, shouldReduceMotion]);
+  }, [releaseScrollLock, revealContent]);
 
   const revealHome = useCallback(
     async (requestId: number) => {
@@ -381,19 +375,7 @@ export default function PageTransitionProvider({
        * предыдущая страница. Значение фильтра не
        * перескакивает между двумя фазами перехода.
        */
-      if (shouldReduceMotion) {
-        controls.set(visibleState);
-      } else {
-        /*
-         * Wrapper не сбрасывается между route и Home.
-         * Продолжаем анимацию из сохранённого hiddenState,
-         * поэтому blur проходит стык без второго keyframe.
-         */
-        await controls.start({
-          ...visibleState,
-          transition: revealTransition,
-        });
-      }
+      await revealContent();
 
       pendingTransitionRef.current = null;
       setHomeEntryPhase("idle");
@@ -402,7 +384,7 @@ export default function PageTransitionProvider({
       transitionLockRef.current = false;
       revealLockRef.current = false;
     },
-    [controls, shouldReduceMotion],
+    [revealContent],
   );
 
   const markHomeReady = useCallback(
@@ -680,6 +662,10 @@ export default function PageTransitionProvider({
       >
         {children}
       </motion.div>
+      {brandTransition && createPortal(
+        <BrandTransitionOverlay expanded={brandTransition.expanded} leaving={brandTransition.leaving} />,
+        document.body,
+      )}
     </PageTransitionContext.Provider>
   );
 }

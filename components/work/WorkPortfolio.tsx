@@ -11,20 +11,16 @@ import {
   useState,
 } from "react";
 
+import type { WorkFilterId } from "@/lib/work-filters";
 import ProjectCard from "@/components/projects/ProjectCard";
 import type { Project } from "@/types/project";
 
 type WorkPortfolioProps = {
   projects: Project[];
+  initialFilter?: WorkFilterId;
 };
 
-type FilterId =
-  | "all"
-  | "direction"
-  | "color-grading"
-  | "editing"
-  | "sound-design"
-  | "3d";
+type FilterId = WorkFilterId;
 
 type WorkFilter = {
   id: FilterId;
@@ -221,6 +217,7 @@ function getFilterMotion(
 
 export default function WorkPortfolio({
   projects,
+  initialFilter = "all",
 }: WorkPortfolioProps) {
   const shouldReduceMotion =
     useReducedMotion();
@@ -253,7 +250,7 @@ useEffect(() => {
   const [
     activeFilter,
     setActiveFilter,
-  ] = useState<FilterId>("all");
+  ] = useState<FilterId>(initialFilter);
 
   const [
     hoveredFilterIndex,
@@ -273,6 +270,14 @@ useEffect(() => {
     gridRevision,
     setGridRevision,
   ] = useState(0);
+
+  function selectFilter(id: FilterId) {
+    setActiveFilter(id);
+    const url = new URL(window.location.href);
+    if (id === "all") url.searchParams.delete("discipline");
+    else url.searchParams.set("discipline", id);
+    window.history.replaceState(window.history.state, "", url.pathname + url.search + url.hash);
+  }
 
   const visibleProjects =
     useMemo(() => {
@@ -531,9 +536,7 @@ useEffect(() => {
                               null,
                             );
 
-                            setActiveFilter(
-                              filter.id,
-                            );
+                            selectFilter(filter.id);
 
                             setGridRevision(
                               (revision) =>
@@ -562,9 +565,7 @@ useEffect(() => {
                             ),
                           );
 
-                          setActiveFilter(
-                            filter.id,
-                          );
+                          selectFilter(filter.id);
 
                           setGridRevision(
                             (revision) =>

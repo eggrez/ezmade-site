@@ -175,7 +175,7 @@ export default function Navbar({
    * the logo sharply for a moment.
    */
   useEffect(() => {
-    if (isMobileViewport !== true || shouldReduceMotion) {
+    if (shouldReduceMotion) {
       return;
     }
 
@@ -197,7 +197,6 @@ export default function Navbar({
   }, [isMobileViewport, routeRevealKey, shouldReduceMotion]);
 
   const isMobileRouteRevealReady =
-    isMobileViewport !== true ||
     shouldReduceMotion ||
     revealedMobileRouteKey === routeRevealKey;
 
@@ -643,7 +642,7 @@ export default function Navbar({
     ].join(" ")}
   >
     <motion.div
-  key={isMobileViewport ? routeRevealKey : "desktop-navbar"}
+  key={routeRevealKey}
   initial={false}
   animate={visibleRouteLayer}
   transition={{ duration: 0 }}

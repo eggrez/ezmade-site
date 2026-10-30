@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import TransitionLink from "@/components/transitions/TransitionLink";
 import type {
   AnchorHTMLAttributes,
   ButtonHTMLAttributes,
@@ -254,13 +254,13 @@ export default function GlassButton(
     } = props;
 
     return (
-      <Link
+      <TransitionLink
         href={href}
         className={classes}
         {...linkProps}
       >
         {content}
-      </Link>
+      </TransitionLink>
     );
   }
 

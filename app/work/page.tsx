@@ -1,3 +1,4 @@
+import { getWorkFilter } from "@/lib/work-filters";
 import type { Metadata } from "next";
 
 import Navbar from "@/components/navigation/Navbar";
@@ -12,12 +13,15 @@ export const metadata: Metadata = createPageMetadata({
   path: "/work",
 });
 
-export default function WorkPage() {
+export default async function WorkPage({ searchParams }: {
+  searchParams: Promise<{ discipline?: string | string[] }>;
+}) {
+  const initialFilter = getWorkFilter((await searchParams).discipline);
   return (
   <main className="min-h-screen overflow-clip bg-white">
       <Navbar variant="simple" />
 
-      <WorkPortfolio projects={projects} />
+      <WorkPortfolio key={initialFilter} projects={projects} initialFilter={initialFilter} />
     </main>
   );
 }

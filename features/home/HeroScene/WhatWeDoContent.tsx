@@ -9,15 +9,17 @@ import {
 } from "framer-motion";
 import { useState } from "react";
 
+import TransitionLink from "@/components/transitions/TransitionLink";
+import type { WorkFilterId } from "@/lib/work-filters";
 import SplitSection from "@/components/layout/SplitSection";
 
 type WhatWeDoContentProps = {
   progress: MotionValue<number>;
-  onNavigateToSelectedWork: () => void | Promise<void>;
 };
 
 type Service = {
   title: string;
+  filter: Exclude<WorkFilterId, "all">;
 };
 
 type ServiceRowProps = {
@@ -34,24 +36,28 @@ type ServiceRowProps = {
   ) => void;
   onLeave: () => void;
   onShineComplete: (title: string) => void;
-  onSelect: () => void | Promise<void>;
 };
 
 const services: Service[] = [
   {
     title: "Direction",
+    filter: "direction",
   },
   {
     title: "Color Grading",
+    filter: "color-grading",
   },
   {
     title: "Editing",
+    filter: "editing",
   },
   {
     title: "Sound Design",
+    filter: "sound-design",
   },
   {
     title: "3D",
+    filter: "3d",
   },
 ];
 
@@ -123,7 +129,6 @@ function ServiceRow({
   onEnter,
   onLeave,
   onShineComplete,
-  onSelect,
 }: ServiceRowProps) {
   const [revealStart, revealEnd] =
     serviceRevealRanges[index];
@@ -198,11 +203,8 @@ function ServiceRow({
           zIndex: isActive ? 2 : 1,
         }}
       >
-        <button
-          type="button"
-          onClick={() => {
-            void onSelect();
-          }}
+        <TransitionLink
+          href={`/work?discipline=${service.filter}`}
           onMouseEnter={() =>
             onEnter(service.title, index)
           }
@@ -217,7 +219,7 @@ function ServiceRow({
             "focus-visible:outline-none",
             "focus-visible:opacity-100",
           ].join(" ")}
-          aria-label={`Go to selected work from ${service.title}`}
+          aria-label={`Show ${service.title} projects`}
         >
           <span className="relative block py-[0.12em]">
             <span
@@ -274,7 +276,7 @@ function ServiceRow({
               </motion.span>
             )}
           </span>
-        </button>
+        </TransitionLink>
       </motion.div>
     </motion.div>
   );
@@ -282,7 +284,6 @@ function ServiceRow({
 
 export function WhatWeDoContent({
   progress,
-  onNavigateToSelectedWork,
 }: WhatWeDoContentProps) {
   const shouldReduceMotion =
     useReducedMotion() ?? false;
@@ -356,8 +357,8 @@ export function WhatWeDoContent({
           : contentVisibility,
       }}
       className={[
-  "absolute inset-0 z-20",
-  "flex items-start pt-[clamp(5rem,11svh,8rem)]",
+  "relative z-20",
+  "flex items-start",
   "lg:items-center lg:pt-0",
   "bg-[var(--color-bg)]",
   "will-change-opacity",
@@ -380,6 +381,7 @@ export function WhatWeDoContent({
         ].join(" ")}
       >
         <SplitSection
+          className="!py-16 md:!py-20"
           title="What we do."
           spacing="generous"
           layout="extra-wide"
@@ -415,9 +417,6 @@ export function WhatWeDoContent({
                   }
                   onShineComplete={
                     handleShineComplete
-                  }
-                  onSelect={
-                    onNavigateToSelectedWork
                   }
                 />
               ),

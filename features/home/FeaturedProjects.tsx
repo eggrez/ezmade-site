@@ -233,7 +233,7 @@ const buttonBlur = useTransform(
     <section
       id="selected-work"
       className={[
-  "flex h-full w-full items-start",
+  "flex w-full items-start !py-16 md:!py-20",
   "bg-[var(--color-bg)]",
   "px-[clamp(24px,4vw,72px)]",
 
@@ -256,6 +256,7 @@ const buttonBlur = useTransform(
 ].join(" ")}
     >
       <div
+        data-home-content
         className={[
   "mx-auto grid w-full max-w-[1800px]",
   "grid-cols-1 gap-6",

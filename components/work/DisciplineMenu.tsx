@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import TransitionLink from "@/components/transitions/TransitionLink";
 import {
   motion,
   useReducedMotion,
@@ -93,7 +93,7 @@ export default function DisciplineMenu({
                 zIndex: isActive ? 2 : 1,
               }}
             >
-              <Link
+              <TransitionLink
                 href={`/work/${discipline.slug}`}
                 className={[
                   "relative block whitespace-nowrap",
@@ -166,7 +166,7 @@ export default function DisciplineMenu({
                     </motion.span>
                   )}
                 </span>
-              </Link>
+              </TransitionLink>
             </motion.div>
           );
         })}

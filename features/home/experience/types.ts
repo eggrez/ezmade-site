@@ -32,9 +32,8 @@ export type SceneMotionPreset = {
 };
 
 export type SceneLayerProps = {
-  progress: MotionValue<number>;
-  range: SceneRange;
-  children: ReactNode;
+  target: "hero" | "what" | "works" | "about" | "contact";
+  children: (progress: MotionValue<number>, rawProgress: MotionValue<number>) => ReactNode;
 
   className?: string;
   contentClassName?: string;

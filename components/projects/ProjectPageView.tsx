@@ -76,8 +76,10 @@ export default function ProjectPageView({
   const shouldReduceMotion =
     useReducedMotion();
 
-    const { isTransitioning } =
+    const { isContentReady } =
   useProjectTransition();
+  // Reveal the page while the light overlay fades, avoiding a second blank beat.
+  const isTransitioning = !isContentReady;
 
   const [
     lightboxIndex,

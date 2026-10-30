@@ -1,10 +1,14 @@
 import { Resend } from "resend";
+import { dataConsentVersion } from "@/lib/data-consent";
+import { privacyPolicyVersion } from "@/lib/privacy-policy";
 
 type ContactRequest = {
   name?: unknown;
   email?: unknown;
   project?: unknown;
   companyFax?: unknown;
+  privacyAccepted?: unknown;
+  processingAccepted?: unknown;
 };
 
 type RateLimitEntry = {
@@ -112,6 +116,14 @@ export async function POST(request: Request) {
   });
 }
 
+    if (body.privacyAccepted !== true) {
+      return Response.json({ error: "Please accept the Privacy Policy." }, { status: 400 });
+    }
+
+    if (body.processingAccepted !== true) {
+      return Response.json({ error: "Please consent to personal data processing." }, { status: 400 });
+    }
+
     const clientIp = getClientIp(request);
     const rateLimit = checkRateLimit(clientIp);
 
@@ -182,6 +194,7 @@ export async function POST(request: Request) {
       );
     }
 
+    const acceptedAt = new Date().toISOString();
     const resend = new Resend(apiKey);
 
     const { data, error } = await resend.emails.send({
@@ -191,6 +204,8 @@ export async function POST(request: Request) {
       subject: `New project enquiry from ${name}`,
       html: `
         <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #111;">
+          <p>Privacy Policy accepted: ${escapeHtml(privacyPolicyVersion)} at ${escapeHtml(acceptedAt)}</p>
+          <p>Personal data processing consent: ${escapeHtml(dataConsentVersion)} at ${escapeHtml(acceptedAt)}</p>
           <h1 style="font-size: 24px; margin-bottom: 24px;">
             New project enquiry
           </h1>
@@ -248,6 +263,8 @@ export async function POST(request: Request) {
                 "",
                 `Name: ${name}`,
                 `Email: ${email}`,
+                `Privacy Policy accepted: ${privacyPolicyVersion} at ${acceptedAt}`,
+                `Processing consent: ${dataConsentVersion} at ${acceptedAt}`,
                 "",
                 "Project:",
                 project,

@@ -4,202 +4,64 @@ import {
   motion,
   useMotionTemplate,
   useReducedMotion,
+  useScroll,
+  useSpring,
   useTransform,
 } from "framer-motion";
+import { useRef } from "react";
 
 import { defaultScenePreset } from "./timeline";
 import type { SceneLayerProps } from "./types";
 
 export default function SceneLayer({
-  progress,
-  range,
+  target,
   children,
-
   className = "",
   contentClassName = "",
-
   preset,
-  managePointerEvents = true,
 }: SceneLayerProps) {
-  const shouldReduceMotion =
-    useReducedMotion() ?? false;
+  const ref = useRef<HTMLElement>(null);
+  const shouldReduceMotion = useReducedMotion() ?? false;
+  const isHero = target === "hero";
+  const motionPreset = { ...defaultScenePreset, ...preset };
 
-  const motionPreset = {
-    ...defaultScenePreset,
-    ...preset,
-  };
-
-  const isFinalScene =
-    range.exitEnd >= 1 &&
-    range.holdEnd >= 1;
-
-  const opacity = useTransform(
-    progress,
-    isFinalScene
-      ? [
-          range.enterStart,
-          range.enterEnd,
-          1,
-        ]
-      : [
-          range.enterStart,
-          range.enterEnd,
-          range.holdEnd,
-          range.exitEnd,
-        ],
-    isFinalScene
-      ? [0, 1, 1]
-      : [0, 1, 1, 0],
-  );
-
-  const y = useTransform(
-    progress,
-    isFinalScene
-      ? [
-          range.enterStart,
-          range.enterEnd,
-          1,
-        ]
-      : [
-          range.enterStart,
-          range.enterEnd,
-          range.holdEnd,
-          range.exitEnd,
-        ],
-    isFinalScene
-      ? [
-          motionPreset.enterY,
-          0,
-          0,
-        ]
-      : [
-          motionPreset.enterY,
-          0,
-          0,
-          motionPreset.exitY,
-        ],
-  );
-
-  const scale = useTransform(
-    progress,
-    isFinalScene
-      ? [
-          range.enterStart,
-          range.enterEnd,
-          1,
-        ]
-      : [
-          range.enterStart,
-          range.enterEnd,
-          range.holdEnd,
-          range.exitEnd,
-        ],
-    isFinalScene
-      ? [
-          motionPreset.enterScale,
-          1,
-          1,
-        ]
-      : [
-          motionPreset.enterScale,
-          1,
-          1,
-          motionPreset.exitScale,
-        ],
-  );
-
-  const blur = useTransform(
-    progress,
-    isFinalScene
-      ? [
-          range.enterStart,
-          range.enterEnd,
-          1,
-        ]
-      : [
-          range.enterStart,
-          range.enterEnd,
-          range.holdEnd,
-          range.exitEnd,
-        ],
-    isFinalScene
-      ? [
-          motionPreset.enterBlur,
-          0,
-          0,
-        ]
-      : [
-          motionPreset.enterBlur,
-          0,
-          0,
-          motionPreset.exitBlur,
-        ],
-  );
-
-  const filter =
-    useMotionTemplate`blur(${blur}px)`;
-
-  const pointerEvents = useTransform(
-    progress,
-    (value) => {
-      if (!managePointerEvents) {
-        return "auto";
-      }
-
-      const interactiveStart =
-        range.enterStart +
-        (range.enterEnd - range.enterStart) *
-          0.55;
-
-      const interactiveEnd =
-        isFinalScene
-          ? 1
-          : range.holdEnd +
-            (range.exitEnd - range.holdEnd) *
-              0.45;
-
-      return value >= interactiveStart &&
-        value <= interactiveEnd
-        ? "auto"
-        : "none";
-    },
-  );
+  // Observe native scrolling without pinning, snapping or intercepting input.
+  // Once revealed, content remains visible as the section leaves the viewport.
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: isHero ? ["start start", "end start"] : ["start end", "start 35%"],
+  });
+  const progress = useSpring(scrollYProgress, {
+    stiffness: 70,
+    damping: 24,
+    mass: 0.6,
+  });
+  const reveal = useTransform(progress, (value) => {
+    const t = Math.min(1, Math.max(0, value / 0.45));
+    return t * t * (3 - 2 * t);
+  });
+  const opacity = useTransform(reveal, [0, 1], [0, 1]);
+  const y = useTransform(reveal, [0, 1], [motionPreset.enterY, 0]);
+  const scale = useTransform(reveal, [0, 1], [motionPreset.enterScale, 1]);
+  const blur = useTransform(reveal, [0, 1], [motionPreset.enterBlur, 0]);
+  const filter = useMotionTemplate`blur(${blur}px)`;
 
   return (
-    <motion.section
-      aria-hidden={undefined}
-      style={
-        shouldReduceMotion
-          ? {
-              opacity: 1,
-              y: 0,
-              scale: 1,
-              filter: "blur(0px)",
-              pointerEvents: "auto",
-            }
-          : {
-              opacity,
-              y,
-              scale,
-              filter,
-              pointerEvents,
-            }
-      }
-      className={[
-        "absolute inset-0",
-        "origin-center",
-        "will-change-[transform,opacity,filter]",
-        className,
-      ].join(" ")}
+    <section
+      ref={ref}
+      data-home-scene={target}
+      className={["relative", className].join(" ")}
     >
-      <div
+      <motion.div
+        style={shouldReduceMotion || isHero ? undefined : { opacity, y, scale, filter }}
         className={[
-          "relative h-full w-full",
+          "relative w-full origin-center",
+          "will-change-[transform,opacity,filter]",
           contentClassName,
         ].join(" ")}
       >
-        {children}
-      </div>
-    </motion.section>
+        {children(progress, scrollYProgress)}
+      </motion.div>
+    </section>
   );
 }

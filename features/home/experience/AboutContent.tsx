@@ -61,12 +61,12 @@ export default function AboutContent({
   );
 
   return (
-   <div className="h-full w-full">
+   <div className="w-full">
       <Section
   id="about"
   spacing="generous"
   className={[
-    "flex h-full items-center",
+    "flex items-center !py-16 md:!py-20",
 
     "[@media(min-width:540px)_and_(max-width:767px)_and_(max-height:720px)]:items-start",
     "[@media(min-width:540px)_and_(max-width:767px)_and_(max-height:720px)]:pt-[5.25rem]",
@@ -74,8 +74,9 @@ export default function AboutContent({
 >
         <WideContainer>
           <div
+  data-home-content
   className={[
-    "grid items-stretch",
+    "grid items-stretch !translate-y-0",
     "gap-8",
 
     "[@media(max-height:720px)]:gap-4",
@@ -100,7 +101,7 @@ export default function AboutContent({
 
             <div
   className={[
-    "mt-10 flex min-w-0 items-center",
+    "!mt-0 flex min-w-0 items-center",
 
     "[@media(max-height:720px)]:mt-16",
 "[@media(min-width:540px)_and_(max-width:767px)_and_(max-height:720px)]:!mt-0",
@@ -193,7 +194,7 @@ export default function AboutContent({
 
     "xl:ml-auto",
     "xl:mr-0",
-    "xl:max-w-[620px]",
+    "xl:!max-w-[min(620px,55svh)]",
     "[@media(min-width:1200px)_and_(max-width:1400px)_and_(max-height:900px)]:!max-w-[420px]",
   ].join(" ")}
 >

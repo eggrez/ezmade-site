@@ -6,6 +6,7 @@ import {
   useReducedMotion,
   useTransform,
 } from "framer-motion";
+import TransitionLink from "@/components/transitions/TransitionLink";
 import { useCallback, useLayoutEffect, useRef } from "react";
 
 import Navbar, {
@@ -13,15 +14,14 @@ import Navbar, {
 } from "@/components/navigation/Navbar";
 import { usePageTransition } from "@/components/transitions/PageTransitionProvider";
 import FeaturedProjects from "@/features/home/FeaturedProjects";
-import HeroContent from "@/features/home/HeroScene/HeroContent";
+import CompactIntro from "./CompactIntro";
 import { WhatWeDoContent } from "@/features/home/HeroScene/WhatWeDoContent";
 
 import AboutContent from "./AboutContent";
 import ContactContent from "./ContactContent";
 import SceneLayer from "./SceneLayer";
-import { HOME_EXPERIENCE_HEIGHT, homeTimeline } from "./timeline";
-import { useSceneProgress } from "./useSceneProgress";
 import { useTimeline } from "./useTimeline";
+import { useHomeScrollTargets } from "./useHomeScrollTargets";
 
 const transitionEase = [0.22, 1, 0.36, 1] as const;
 const blurEase = [0.4, 0, 0.2, 1] as const;
@@ -63,6 +63,11 @@ const sceneRevealTransition = {
     duration: 1.16,
     ease: blurEase,
   },
+} as const;
+
+const initialHomeRevealTransition = {
+  opacity: { duration: 0.5, ease: transitionEase },
+  filter: { duration: 0.7, ease: blurEase },
 } as const;
 
 function getExternalSceneTarget(): HomeNavigationTarget | null {
@@ -170,83 +175,22 @@ export default function HomeExperience() {
 
   const { homeEntry, markHomeReady } = usePageTransition();
 
-  /*
-   * При клиентском переходе HomeExperience
-   * рендерится уже с актуальным URL.
-   *
-   * Запоминаем target синхронно во время самого
-   * первого render, чтобы transition-контейнер
-   * появился скрытым сразу, ещё до layout effect.
-   * Иначе один полностью готовый кадр Selected Work
-   * успевает попасть на экран прямой склейкой.
-   */
-  const initialExternalTargetRef = useRef<HomeNavigationTarget | null>(
-    homeEntry?.target ?? getExternalSceneTarget(),
-  );
-
-  const initialEntryIsManagedRef = useRef(Boolean(homeEntry));
-
   const sceneControls = useAnimationControls();
 
   const shouldReduceMotion = useReducedMotion();
 
   const { progress, rawProgress } = useTimeline(experienceRef);
 
-  const heroProgress = useSceneProgress(progress, homeTimeline.hero);
+  // Reveal softly from the first scroll movement, finishing over 14% of Hero.
+  const navigationProgress = useTransform(progress, (value) => {
+    const experience = experienceRef.current;
+    if (!experience || typeof window === "undefined") return 0.17;
+    const hero = experience.querySelector<HTMLElement>('[data-home-scene="hero"]');
+    const distance = Math.max(experience.offsetHeight - window.innerHeight, 0);
+    return 0.17 + value * distance / Math.max(hero?.offsetHeight ?? window.innerHeight, 1) * (0.085 / 0.14);
+  });
 
-  const heroRawProgress = useSceneProgress(rawProgress, homeTimeline.hero);
-
-  const whatProgress = useSceneProgress(progress, homeTimeline.what);
-
-  const featuredProgress = useSceneProgress(progress, homeTimeline.featured);
-
-  /*
-   * Внешняя сцена Selected Work должна успеть
-   * полностью собраться ещё до начала exit-фазы.
-   *
-   * Поэтому внутреннюю анимацию карточек заканчиваем
-   * на 72% локального progress, а оставшуюся часть
-   * диапазона держим в полностью готовом состоянии.
-   */
-  const featuredContentProgress = useTransform(
-    featuredProgress,
-    [0, 0.72, 1],
-    [0, 1, 1],
-  );
-
-  const aboutProgress = useSceneProgress(progress, homeTimeline.about);
-
-  const contactProgress = useSceneProgress(progress, homeTimeline.contact);
-
-  const getTargetProgress = useCallback(
-    (target: HomeNavigationTarget): number => {
-      if (target === "hero") {
-        return 0;
-      }
-
-      const ranges = {
-        works: homeTimeline.featured,
-        about: homeTimeline.about,
-        contact: homeTimeline.contact,
-      };
-
-      const range = ranges[target];
-
-      const holdDuration = Math.max(range.holdEnd - range.enterEnd, 0);
-
-      if (target === "works") {
-        /*
-         * Почти конец hold-фазы: SceneLayer ещё
-         * полностью непрозрачен, а remapped progress
-         * FeaturedProjects уже точно равен 1.
-         */
-        return Math.max(range.enterEnd, range.holdEnd - 0.006);
-      }
-
-      return Math.min(range.enterEnd + holdDuration * 0.32, range.holdEnd);
-    },
-    [],
-  );
+  const { getTargetProgress, tailRef } = useHomeScrollTargets(experienceRef);
 
   /*
    * Мгновенно меняет физическое положение
@@ -552,7 +496,7 @@ export default function HomeExperience() {
       } else {
         await sceneControls.start({
           ...visibleSceneState,
-          transition: sceneRevealTransition,
+          transition: target === "hero" ? initialHomeRevealTransition : sceneRevealTransition,
         });
       }
 
@@ -578,19 +522,9 @@ export default function HomeExperience() {
     shouldReduceMotion,
   ]);
 
-  const navigateToSelectedWork = useCallback(async () => {
-    const didNavigate = await navigateToScene("works");
-
-    if (!didNavigate) {
-      return;
-    }
-
-    window.history.replaceState(window.history.state, "", "#selected-work");
-  }, [navigateToScene]);
-
   return (
     <>
-      <Navbar variant="home" progress={progress} onNavigate={navigateToScene} />
+      <Navbar variant="home" progress={navigationProgress} onNavigate={navigateToScene} />
 
       <main
         id="home-experience"
@@ -598,40 +532,17 @@ export default function HomeExperience() {
         className={["relative", "overflow-x-clip", "bg-[var(--color-bg)]"].join(
           " ",
         )}
-        style={{
-          height: `${HOME_EXPERIENCE_HEIGHT}svh`,
-        }}
       >
-        <div
-          className={[
-            "sticky top-0",
-            "h-svh w-full",
-            "[@media(width:414px)_and_(orientation:portrait)]:!h-[calc(100dvh+2px)]",
-            "overflow-hidden",
-            "bg-[var(--color-bg)]",
-          ].join(" ")}
-        >
-          {/*
-           * Все настоящие секции находятся
-           * внутри одного transition-контейнера.
-           *
-           * Он исчезает, пока scroll мгновенно
-           * переставляется на новую сцену,
-           * а затем проявляется обратно.
-           */}
-
           <motion.div
             initial={
-              initialExternalTargetRef.current &&
-              !initialEntryIsManagedRef.current &&
-              !shouldReduceMotion
-                ? hiddenSceneState
-                : visibleSceneState
+              shouldReduceMotion || homeEntry
+                ? visibleSceneState
+                : hiddenSceneState
             }
             animate={sceneControls}
             suppressHydrationWarning
             className={[
-              "absolute inset-0",
+              "relative",
               "origin-center",
               "transform-gpu",
               "will-change-[opacity,filter,transform]",
@@ -642,30 +553,12 @@ export default function HomeExperience() {
           >
             {/* Hero */}
 
-            <SceneLayer
-              progress={progress}
-              range={homeTimeline.hero}
-              preset={{
-                enterY: 0,
-                exitY: 0,
-                enterScale: 1,
-                exitScale: 1.008,
-                enterBlur: 0,
-                exitBlur: 6,
-              }}
-              className="z-10"
-            >
-              <HeroContent
-                progress={heroProgress}
-                rawProgress={heroRawProgress}
-              />
-            </SceneLayer>
+            <CompactIntro />
 
             {/* What We Do */}
 
             <SceneLayer
-              progress={progress}
-              range={homeTimeline.what}
+              target="what"
               preset={{
                 enterY: 0,
                 exitY: -24,
@@ -676,17 +569,17 @@ export default function HomeExperience() {
               }}
               className="z-20"
             >
-              <WhatWeDoContent
-                progress={whatProgress}
-                onNavigateToSelectedWork={navigateToSelectedWork}
-              />
+              {(progress) => (
+                <WhatWeDoContent
+                  progress={progress}
+                />
+              )}
             </SceneLayer>
 
             {/* Selected Work */}
 
             <SceneLayer
-              progress={progress}
-              range={homeTimeline.featured}
+              target="works"
               preset={{
                 enterY: 48,
                 exitY: -30,
@@ -697,14 +590,13 @@ export default function HomeExperience() {
               }}
               className="z-30"
             >
-              <FeaturedProjects progress={featuredContentProgress} />
+              {(progress) => <FeaturedProjects progress={progress} />}
             </SceneLayer>
 
             {/* About */}
 
             <SceneLayer
-              progress={progress}
-              range={homeTimeline.about}
+              target="about"
               preset={{
                 enterY: 38,
                 exitY: -22,
@@ -715,14 +607,13 @@ export default function HomeExperience() {
               }}
               className="z-40"
             >
-              <AboutContent progress={aboutProgress} />
+              {(progress) => <AboutContent progress={progress} />}
             </SceneLayer>
 
             {/* Contact */}
 
             <SceneLayer
-              progress={progress}
-              range={homeTimeline.contact}
+              target="contact"
               preset={{
                 enterY: 64,
                 exitY: 0,
@@ -733,11 +624,14 @@ export default function HomeExperience() {
               }}
               className="z-50"
             >
-              <ContactContent progress={contactProgress} />
+              {(progress) => <ContactContent progress={progress} />}
             </SceneLayer>
           </motion.div>
-        </div>
+          <div ref={tailRef} aria-hidden="true" data-home-scroll-tail style={{ height: 32 }} />
       </main>
+      <footer className="px-[clamp(24px,4vw,72px)] py-6 text-xs text-[var(--color-text-secondary)]">
+        <TransitionLink href="/privacy" className="underline underline-offset-4">Privacy Policy</TransitionLink>
+      </footer>
 
       {/*
        * Прозрачная блокировка кликов

@@ -126,6 +126,9 @@ export default function ContactContent({
   const [isSubmitted, setIsSubmitted] = useState(false);
 const [isSending, setIsSending] = useState(false);
 const [submitError, setSubmitError] = useState("");
+const [privacyAccepted, setPrivacyAccepted] = useState(false);
+const [processingAccepted, setProcessingAccepted] = useState(false);
+const privacyPolicyUrl = "/privacy";
 
 
 const [activeSocialIndex, setActiveSocialIndex] =
@@ -202,7 +205,9 @@ const [activeSocialIndex, setActiveSocialIndex] =
   event.preventDefault();
 
   const form = event.currentTarget;
+  if (!form.reportValidity()) return;
   const formData = new FormData(form);
+  if (formData.get("privacyAccepted") !== "on" || formData.get("processingAccepted") !== "on") return;
 
   const name = String(formData.get("name") ?? "").trim();
   const email = String(formData.get("email") ?? "").trim();
@@ -225,6 +230,8 @@ const [activeSocialIndex, setActiveSocialIndex] =
         email,
         project,
         companyFax,
+        privacyAccepted: formData.get("privacyAccepted") === "on",
+        processingAccepted: formData.get("processingAccepted") === "on",
       }),
     });
 
@@ -237,6 +244,8 @@ const [activeSocialIndex, setActiveSocialIndex] =
     }
 
     form.reset();
+    setPrivacyAccepted(false);
+    setProcessingAccepted(false);
     setIsSubmitted(true);
   } catch (error) {
     setSubmitError(
@@ -266,7 +275,7 @@ const [activeSocialIndex, setActiveSocialIndex] =
     <section
       id="contact"
       className={[
-        "h-full w-full",
+        "grid min-h-[calc(100svh-var(--home-navbar-height,72px))] w-full items-center !py-16 md:!py-20",
         "overflow-hidden",
         "bg-[var(--color-bg)]",
         "px-[clamp(24px,4vw,72px)]",
@@ -281,9 +290,10 @@ const [activeSocialIndex, setActiveSocialIndex] =
       ].join(" ")}
     >
       <div
+        data-home-content
         className={[
           "mx-auto grid w-full max-w-[2200px] content-start",
-"lg:h-full lg:content-stretch",
+"lg:content-stretch",
           "grid-cols-1 gap-8",
           "[@media(width:414px)_and_(orientation:portrait)]:!gap-5",
           "lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]",
@@ -292,7 +302,7 @@ const [activeSocialIndex, setActiveSocialIndex] =
 "lg:gap-[clamp(80px,9vw,220px)]",
 "[@media(min-width:900px)_and_(max-width:1100px)]:gap-6",
 
-"[@media(min-width:900px)_and_(max-width:1100px)_and_(max-height:700px)]:h-full",
+
 "[@media(min-width:900px)_and_(max-width:1100px)_and_(max-height:700px)]:!grid-cols-[0.85fr_1.15fr]",
 "[@media(min-width:900px)_and_(max-width:1100px)_and_(max-height:700px)]:content-center",
 "[@media(min-width:900px)_and_(max-width:1100px)_and_(max-height:700px)]:!gap-12",
@@ -616,17 +626,32 @@ const [activeSocialIndex, setActiveSocialIndex] =
   "md:justify-between",
 ].join(" ")}
 >
-                      <p className="max-w-[440px] text-[13px] leading-[1.55] text-[var(--color-text-secondary)] sm:text-sm">
-  We&apos;ll only use your email to reply to your message.
-</p>
-
+                      <div className="flex flex-col gap-1">
+                      <label className="flex min-h-11 max-w-[440px] cursor-pointer items-center gap-3 text-[13px] leading-[1.55] text-[var(--color-text-secondary)] sm:text-sm">
+                        <input
+                          type="checkbox"
+                          name="privacyAccepted"
+                          required
+                          checked={privacyAccepted}
+                          onChange={(event) => setPrivacyAccepted(event.target.checked)}
+                          className="h-4 w-4 shrink-0 cursor-pointer accent-black focus-visible:outline-2 focus-visible:outline-offset-4"
+                        />
+                        <span>I accept the {privacyPolicyUrl ? (
+                          <a href={privacyPolicyUrl} target="_blank" rel="noreferrer" className="underline underline-offset-4 hover:text-black">Privacy Policy</a>
+                        ) : "Privacy Policy"}.</span>
+                      </label>
+                      <label className="flex min-h-11 max-w-[440px] cursor-pointer items-center gap-3 text-[13px] leading-[1.55] text-[var(--color-text-secondary)] sm:text-sm">
+                        <input type="checkbox" name="processingAccepted" required checked={processingAccepted} onChange={(event) => setProcessingAccepted(event.target.checked)} className="h-4 w-4 shrink-0 cursor-pointer accent-black focus-visible:outline-2 focus-visible:outline-offset-4" />
+                        <span>I consent to <a href="/consent" target="_blank" rel="noreferrer" className="underline underline-offset-4 hover:text-black">personal data processing</a>.</span>
+                      </label>
+                      </div>
 
                       <GlassButton
   type="submit"
   variant="primary"
   size="large"
   fullWidth
-  disabled={isSending}
+  disabled={isSending || !privacyAccepted || !processingAccepted}
   className={[
     "sm:w-auto",
     "[@media(max-width:380px)_and_(max-height:700px)]:!min-h-[42px]",
