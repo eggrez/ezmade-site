@@ -9,6 +9,7 @@ export type ProjectGalleryItem = {
 
 export type ProjectVideoItem = {
   src: string;
+  mobileSrc?: string;
   poster: string;
   label?: string;
 };
@@ -20,6 +21,7 @@ type ProjectGalleryConfigItem = {
 
 type ProjectVideoConfigItem = {
   src: string;
+  mobileSrc?: string;
   poster?: string;
   label?: string;
 };
@@ -33,7 +35,7 @@ type ProjectMediaConfig = {
 const projectMedia: Record<string, ProjectMediaConfig> = {
   "fractal-design": {
     cover: "cover-v4.jpg",
-    videos: [{ src: "video.mp4" }],
+    videos: [{ src: "video-01-web-v3.mp4", mobileSrc: "video-01-mobile-v3.mp4" }],
     gallery: [
       { filename: "01.jpg", layout: "wide" },
       { filename: "02.jpg", layout: "half" },
@@ -50,27 +52,27 @@ const projectMedia: Record<string, ProjectMediaConfig> = {
 
   videos: [
     {
-      src: "video_1_v2.mp4",
+      src: "video-01-web-v3.mp4", mobileSrc: "video-01-mobile-v3.mp4",
       poster: "cover_1.jpg",
       label: "Film 01",
     },
     {
-      src: "video_2.mp4",
+      src: "video-02-web-v3.mp4", mobileSrc: "video-02-mobile-v3.mp4",
       poster: "cover_2.jpg",
       label: "Film 02",
     },
     {
-      src: "video_3.mp4",
+      src: "video-03-web-v3.mp4", mobileSrc: "video-03-mobile-v3.mp4",
       poster: "cover_3.jpg",
       label: "Film 03",
     },
     {
-      src: "video-04-web-v1.mp4",
+      src: "video-04-web-v3.mp4", mobileSrc: "video-04-mobile-v3.mp4",
       poster: "cover_4.jpg",
       label: "Film 04",
     },
     {
-      src: "video_5.mp4",
+      src: "video-05-web-v3.mp4", mobileSrc: "video-05-mobile-v3.mp4",
       poster: "cover_5.jpg",
       label: "Film 05",
     },
@@ -81,7 +83,7 @@ const projectMedia: Record<string, ProjectMediaConfig> = {
 
   neopolis: {
     cover: "cover.jpg",
-    videos: [{ src: "video.mp4" }],
+    videos: [{ src: "video-01-web-v3.mp4", mobileSrc: "video-01-mobile-v3.mp4" }],
     gallery: [
       { filename: "01.jpg", layout: "wide" },
       { filename: "02.jpg", layout: "half" },
@@ -91,7 +93,7 @@ const projectMedia: Record<string, ProjectMediaConfig> = {
   },
   luma: {
     cover: "cover.jpg",
-    videos: [{ src: "video.mp4" }],
+    videos: [{ src: "video-01-web-v3.mp4", mobileSrc: "video-01-mobile-v3.mp4" }],
     gallery: [
       { filename: "01.jpg", layout: "wide" },
       { filename: "02.jpg", layout: "half" },
@@ -104,7 +106,7 @@ const projectMedia: Record<string, ProjectMediaConfig> = {
   },
   "yandex-lavka": {
     cover: "cover_v2.jpg",
-    videos: [{ src: "video.mp4" }],
+    videos: [{ src: "video-01-web-v3.mp4", mobileSrc: "video-01-mobile-v3.mp4" }],
     gallery: [
       { filename: "01.jpg", layout: "wide" },
       { filename: "02.jpg", layout: "half" },
@@ -114,7 +116,7 @@ const projectMedia: Record<string, ProjectMediaConfig> = {
   },
   higgsfield: {
     cover: "cover.jpg",
-    videos: [{ src: "video-web-v1.mp4" }],
+    videos: [{ src: "video-01-web-v3.mp4", mobileSrc: "video-01-mobile-v3.mp4" }],
     gallery: [
       { filename: "01.jpg", layout: "wide" },
       { filename: "02.jpg", layout: "half" },
@@ -127,7 +129,7 @@ const projectMedia: Record<string, ProjectMediaConfig> = {
   },
   runway: {
     cover: "cover.jpg",
-    videos: [{ src: "video.mp4" }],
+    videos: [{ src: "video-01-web-v3.mp4", mobileSrc: "video-01-mobile-v3.mp4" }],
     gallery: [
       { filename: "01.jpg", layout: "wide" },
       { filename: "02.jpg", layout: "half" },
@@ -139,12 +141,12 @@ const projectMedia: Record<string, ProjectMediaConfig> = {
     cover: "cover.jpg",
     videos: [
       {
-        src: "video-01.mp4",
+        src: "video-01-web-v3.mp4", mobileSrc: "video-01-mobile-v3.mp4",
         poster: "cover.jpg",
         label: "Film 01",
       },
       {
-        src: "video-02.mp4",
+        src: "video-02-web-v3.mp4", mobileSrc: "video-02-mobile-v3.mp4",
         poster: "cover-02.jpg",
         label: "Film 02",
       },
@@ -160,7 +162,7 @@ const projectMedia: Record<string, ProjectMediaConfig> = {
     cover: "cover.jpg",
     videos: [
       {
-        src: "video.mp4",
+        src: "video-01-web-v3.mp4", mobileSrc: "video-01-mobile-v3.mp4",
         poster: "cover.jpg",
       },
     ],
@@ -175,7 +177,7 @@ const projectMedia: Record<string, ProjectMediaConfig> = {
     cover: "cover.jpg",
     videos: [
       {
-        src: "video.mp4",
+        src: "video-01-web-v3.mp4", mobileSrc: "video-01-mobile-v3.mp4",
         poster: "cover.jpg",
       },
     ],
@@ -190,7 +192,7 @@ const projectMedia: Record<string, ProjectMediaConfig> = {
     cover: "cover.jpg",
     videos: [
       {
-        src: "video-web-v1.mp4",
+        src: "video-01-web-v3.mp4", mobileSrc: "video-01-mobile-v3.mp4",
         poster: "cover.jpg",
       },
     ],
@@ -236,6 +238,7 @@ export function getProjectVideos(slug: string): ProjectVideoItem[] {
 
   return config.videos.map((video) => ({
     src: resolveProjectVideoPath(slug, video.src),
+    mobileSrc: video.mobileSrc ? resolveProjectVideoPath(slug, video.mobileSrc) : undefined,
 poster: resolveProjectImagePath(
   slug,
   video.poster ?? config.cover,

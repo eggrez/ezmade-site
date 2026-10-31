@@ -189,6 +189,11 @@ img {
   color-interpolation-filters: sRGB;
 }
 
+.ez-media-frame {
+  overflow: hidden;
+  overflow: clip;
+}
+
 /* Custom cursor */
 
 @media (hover: hover) and (pointer: fine) {

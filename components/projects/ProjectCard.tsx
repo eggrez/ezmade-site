@@ -172,7 +172,7 @@ export default function ProjectCard({
         className={[
           "relative aspect-[16/7]",
 "lg:aspect-[16/10]",
-          "overflow-hidden rounded-sm",
+          "ez-media-frame rounded-sm",
           "bg-neutral-200",
 
           "shadow-[0_0_0_rgba(17,17,17,0)]",
@@ -423,7 +423,7 @@ function EditorialProjectCard({
             className={[
               "relative",
               "aspect-[16/10]",
-              "overflow-hidden",
+              "ez-media-frame",
               "rounded-sm",
               "bg-neutral-200",
 

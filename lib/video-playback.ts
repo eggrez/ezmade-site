@@ -19,9 +19,14 @@ export function playbackErrorMessage(error: { name?: string; code?: number }) {
 
 // Keep both calls inside the user's click; awaiting load/readiness loses iOS activation.
 export function requestVideoPlayback(
-  video: Pick<HTMLVideoElement, "load" | "play" | "error">,
+  video: Pick<HTMLVideoElement, "load" | "play" | "error" | "muted" | "volume">,
   retry = false,
+  preferences?: { muted: boolean; volume: number; nativeVolumeControl: boolean },
 ) {
+  if (preferences) {
+    video.muted = preferences.muted;
+    if (!preferences.nativeVolumeControl) video.volume = preferences.volume;
+  }
   if (retry || video.error) video.load();
   return video.play();
 }

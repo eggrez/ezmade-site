@@ -18,6 +18,8 @@ import {
 
 import ProjectImage from "@/components/media/ProjectImage";
 import { playbackErrorMessage, prefersNativeVideoControls, requestVideoPlayback } from "@/lib/video-playback";
+import { getProjectImageSource, prepareProjectImage } from "@/lib/project-images";
+import { keepMediaFrameUnscrolled } from "@/lib/media-frame";
 
 const subscribeToDevice = () => () => {};
 const getNativeControls = () => prefersNativeVideoControls(navigator);
@@ -25,6 +27,7 @@ const getServerNativeControls = () => false;
 
 type ProjectVideoProps = {
   src: string;
+  mobileSrc?: string;
   poster?: string;
   title: string;
 
@@ -44,6 +47,10 @@ type ProjectVideoProps = {
   autoPlayRequest?: number;
   onPlay?: () => void;
   onEnded?: () => void;
+  priority?: boolean;
+  onPosterReady?: () => void;
+  nativeControls?: boolean;
+  defaultMuted?: boolean;
 };
 
 type IconProps = {
@@ -104,6 +111,7 @@ function deriveHighQualitySource(
 
 export default function ProjectVideo({
   src,
+  mobileSrc,
   poster = "",
   title,
   hideCenterPlay = false,
@@ -112,7 +120,22 @@ export default function ProjectVideo({
   autoPlayRequest = 0,
   onPlay,
   onEnded,
+  priority = false,
+  onPosterReady,
+  nativeControls = false,
+  defaultMuted = false,
 }: ProjectVideoProps) {
+  // Select once per film, so rotating a phone never resets playback.
+  const [sourceChoice, setSourceChoice] = useState({ base: src, url: src, ready: false });
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => setSourceChoice({
+      base: src,
+      url: mobileSrc && window.matchMedia("(max-width: 767px)").matches ? mobileSrc : src,
+      ready: true,
+    }));
+    return () => cancelAnimationFrame(frame);
+  }, [src, mobileSrc]);
+  const preferredSource = sourceChoice.base === src ? sourceChoice.url : src;
   const shouldReduceMotion =
     useReducedMotion();
 
@@ -147,7 +170,14 @@ export default function ProjectVideo({
 
   const nativeDevice = useSyncExternalStore(subscribeToDevice, getNativeControls, getServerNativeControls);
   const [nativeFallback, setNativeFallback] = useState(false);
-  const useNativeControls = nativeDevice || nativeFallback;
+  const useNativeControls = nativeControls || nativeDevice || nativeFallback;
+  const nativePoster = getProjectImageSource(poster, 1280);
+  useEffect(() => {
+    if (!useNativeControls || !poster) return;
+    let active = true;
+    void prepareProjectImage(poster).then(() => { if (active) onPosterReady?.(); }).catch(() => undefined);
+    return () => { active = false; };
+  }, [useNativeControls, poster, onPosterReady]);
   const [playbackError, setPlaybackError] = useState<string | null>(null);
   const [isBuffering, setIsBuffering] = useState(false);
   const [slowLoading, setSlowLoading] = useState(false);
@@ -168,14 +198,14 @@ export default function ProjectVideo({
   }, [src]);
 
   const [activeSource, setActiveSource] =
-    useState(src);
-  const [previousSource, setPreviousSource] = useState(src);
+    useState(preferredSource);
+  const [previousSource, setPreviousSource] = useState(preferredSource);
 
   const [isPlaying, setIsPlaying] =
     useState(false);
 
   const [isMuted, setIsMuted] =
-    useState(false);
+    useState(defaultMuted);
 
   const [volume, setVolume] =
     useState(1);
@@ -216,9 +246,9 @@ export default function ProjectVideo({
     if (error.name === "NotAllowedError") setNativeFallback(true);
   }, []);
 
-  if (previousSource !== src) {
-    setPreviousSource(src);
-    setActiveSource(src);
+  if (previousSource !== preferredSource) {
+    setPreviousSource(preferredSource);
+    setActiveSource(preferredSource);
     setIsReady(false);
     setShowPoster(true);
     setPlaybackError(null);
@@ -313,10 +343,8 @@ export default function ProjectVideo({
     setPlaybackError(null);
     setSlowLoading(false);
     setIsBuffering(true);
-    element.muted = isMuted;
-    element.volume = volume;
-    void requestVideoPlayback(element, retry).catch(handlePlaybackFailure);
-  }, [handlePlaybackFailure, isMuted, volume]);
+    void requestVideoPlayback(element, retry, { muted: isMuted, volume, nativeVolumeControl: nativeDevice }).catch(handlePlaybackFailure);
+  }, [handlePlaybackFailure, isMuted, nativeDevice, volume]);
 
   const togglePlayback = useCallback(() => {
     const element = videoRef.current;
@@ -1002,9 +1030,12 @@ export default function ProjectVideo({
   return (
     <div
       ref={containerRef}
+      data-playback-state={isBuffering ? "loading" : isPlaying ? "playing" : "paused"}
+      data-video-started={currentTime > 0 ? "true" : "false"}
+      onScroll={event => keepMediaFrameUnscrolled(event.currentTarget)}
       className={[
-        "group/player relative",
-        "h-full w-full overflow-hidden",
+        "group/player absolute inset-0",
+        "ez-media-frame h-full w-full",
         "bg-black",
 
         isFullscreen
@@ -1026,15 +1057,15 @@ export default function ProjectVideo({
       <video
         ref={videoRef}
         src={activeSource}
-        poster={poster}
+        poster={useNativeControls ? nativePoster : undefined}
         muted={isMuted}
         playsInline
         controls={useNativeControls}
-        preload={shouldPreload ? "metadata" : "none"}
+        preload={sourceChoice.ready && (priority || shouldPreload) ? "auto" : "none"}
         aria-label={title}
         className={[
           useNativeControls ? "pointer-events-auto" : "pointer-events-none",
-          "h-full w-full",
+          "absolute inset-0 h-full w-full",
 
           isFullscreen
             ? "object-contain"
@@ -1048,6 +1079,14 @@ export default function ProjectVideo({
         ].join(" ")}
       />
 
+      {useNativeControls && !isPlaying && (
+        <button type="button" aria-label={`Play ${title}`} onClick={event => {
+          event.stopPropagation();
+          startPlayback();
+        }} className="absolute left-1/2 top-1/2 z-30 flex h-20 w-20 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-black/25 text-white">
+          <PlayIcon className="h-6 w-6" />
+        </button>
+      )}
       {!useNativeControls && <>
       {/* A click retains browser user activation and supports keyboard input. */}
       <button
@@ -1078,6 +1117,8 @@ export default function ProjectVideo({
         poster && (
           <div className="pointer-events-none absolute inset-0">
             <ProjectImage
+  priority={priority}
+  onReady={onPosterReady}
   src={poster}
   alt={title}
   className="h-full w-full object-cover"

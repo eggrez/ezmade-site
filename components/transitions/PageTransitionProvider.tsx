@@ -71,7 +71,7 @@ const hiddenOpacity = 0.012;
 
 const visibleState = {
   opacity: 1,
-  filter: "blur(0px)",
+  filter: "none",
 } as const;
 
 const hiddenState = {
@@ -651,13 +651,11 @@ export default function PageTransitionProvider({
         animate={controls}
         className={[
           "min-h-full",
-          "transform-gpu",
-          "will-change-[opacity,filter]",
+          isTransitioning ? "will-change-opacity" : "",
           isTransitioning ? "pointer-events-none" : "",
         ].join(" ")}
         style={{
           opacity: 1,
-          backfaceVisibility: "hidden",
         }}
       >
         {children}

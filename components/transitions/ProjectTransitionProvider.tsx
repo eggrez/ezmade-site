@@ -2,6 +2,7 @@
 
 import { useReducedMotion } from "framer-motion";
 import BrandTransitionOverlay, { BRAND_COVER_DURATION, BRAND_EXIT_DURATION } from "./BrandTransitionOverlay";
+import { prepareProjectImage } from "@/lib/project-images";
 
 import {
   createContext,
@@ -85,6 +86,7 @@ type OverlayState = {
 type ProjectTransitionContextValue = {
   isTransitioning: boolean;
   isContentReady: boolean;
+  markProjectReady: (slug: string) => void;
 
   startProjectTransition: (
     options: StartProjectTransitionOptions,
@@ -181,6 +183,9 @@ export default function ProjectTransitionProvider({
 
   const pathname =
     usePathname();
+  const [readyProject, setReadyProject] = useState<string | null>(null);
+  const markProjectReady = useCallback((slug: string) => setReadyProject(slug), []);
+  const transitionGuardRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [
     isMounted,
@@ -239,6 +244,7 @@ export default function ProjectTransitionProvider({
   }, [overlay]);
 
   useEffect(() => {
+    const mountFrame = requestAnimationFrame(() => {
     setIsMounted(true);
 
     try {
@@ -255,10 +261,10 @@ export default function ProjectTransitionProvider({
         );
       }
     } catch {
-      window.sessionStorage.removeItem(
-        STORAGE_KEY,
-      );
+      try { window.sessionStorage.removeItem(STORAGE_KEY); } catch { /* Storage can be unavailable. */ }
     }
+    });
+    return () => cancelAnimationFrame(mountFrame);
   }, []);
 
   useEffect(() => {
@@ -276,6 +282,10 @@ export default function ProjectTransitionProvider({
 
   const clearTimers =
     useCallback(() => {
+      if (transitionGuardRef.current) {
+        clearTimeout(transitionGuardRef.current);
+        transitionGuardRef.current = null;
+      }
       if (routeTimerRef.current) {
         clearTimeout(
           routeTimerRef.current,
@@ -387,6 +397,14 @@ export default function ProjectTransitionProvider({
         }
 
          clearTimers();
+        setReadyProject(null);
+        router.prefetch(`/projects/${slug}`);
+        void prepareProjectImage(image, Math.min(window.innerWidth * window.devicePixelRatio, 2200)).catch(() => undefined);
+        transitionGuardRef.current = setTimeout(() => {
+          overlayRef.current = null;
+          setOverlay(null);
+          window.location.assign(`/projects/${slug}`);
+        }, 10000);
 
 
         const nextOrigin: ProjectOrigin =
@@ -512,6 +530,12 @@ slug,
             ? origin.sourceHref
             : options.href ||
               fallbackHref;
+        router.prefetch(targetHref);
+        transitionGuardRef.current = setTimeout(() => {
+          overlayRef.current = null;
+          setOverlay(null);
+          window.location.assign(targetHref);
+        }, 10000);
 
         const targetUrl =
           new URL(
@@ -676,6 +700,8 @@ slug:
     if (pathname !== targetPath) {
       return;
     }
+    // The destination can mount before its poster has loaded and decoded.
+    if (readyProject !== overlay.slug) return;
 
     setInstantScroll(0);
 
@@ -717,11 +743,14 @@ slug:
                   null;
 
                 setOverlay(null);
+                if (transitionGuardRef.current) clearTimeout(transitionGuardRef.current);
+                transitionGuardRef.current = null;
                 }, shouldReduceMotion ? 0 : BRAND_EXIT_DURATION);
           });
       });
   }, [
     overlay,
+    readyProject,
     shouldReduceMotion,
     pathname,
   ]);
@@ -807,6 +836,8 @@ slug:
 
                     setOverlay(null);
                     clearOrigin();
+                    if (transitionGuardRef.current) clearTimeout(transitionGuardRef.current);
+                    transitionGuardRef.current = null;
                   }, shouldReduceMotion ? 0 : BRAND_EXIT_DURATION);
               }, shouldReduceMotion ? 0 : REVERSE_ROUTE_WAIT);
           });
@@ -930,6 +961,7 @@ slug:
           overlay !== null,
         isContentReady:
           overlay === null || overlay.phase.endsWith("leaving"),
+        markProjectReady,
 
         startProjectTransition,
 

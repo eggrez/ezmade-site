@@ -7,7 +7,7 @@ import {
   useTransform,
 } from "framer-motion";
 import TransitionLink from "@/components/transitions/TransitionLink";
-import { useCallback, useLayoutEffect, useRef } from "react";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 
 import Navbar, {
   type HomeNavigationTarget,
@@ -30,7 +30,7 @@ const hiddenOpacity = 0.012;
 
 const visibleSceneState = {
   opacity: 1,
-  filter: "blur(0px)",
+  filter: "none",
 } as const;
 
 const hiddenSceneState = {
@@ -162,6 +162,7 @@ async function waitForSelectedWorkMedia(): Promise<void> {
 }
 
 export default function HomeExperience() {
+  const [introReady, setIntroReady] = useState(false);
   const experienceRef = useRef<HTMLElement>(null);
 
   const transitionLockRef = useRef(false);
@@ -169,6 +170,8 @@ export default function HomeExperience() {
   const completedManagedEntryIdRef = useRef<number | null>(null);
 
   const { homeEntry, markHomeReady } = usePageTransition();
+  const homeEntryId = homeEntry?.id ?? null;
+  const homeEntryTarget = homeEntry?.target;
 
   const sceneControls = useAnimationControls();
 
@@ -388,7 +391,7 @@ export default function HomeExperience() {
      * каскада. Не запускаем из-за этого повторный
      * hash-вход: сцена уже стоит в нужной точке.
      */
-    if (!homeEntry && completedManagedEntryIdRef.current !== null) {
+    if (homeEntryId === null && completedManagedEntryIdRef.current !== null) {
       sceneControls.set(visibleSceneState);
       return;
     }
@@ -400,11 +403,11 @@ export default function HomeExperience() {
      * перезагрузки и настоящего browser Back.
      */
     const target =
-  homeEntry?.target ??
+  homeEntryTarget ??
   getExternalSceneTarget() ??
   "hero";
 
-    const managedRequestId = homeEntry?.id ?? null;
+    const managedRequestId = homeEntryId;
 
     /*
      * При управляемом переходе внешний provider
@@ -439,6 +442,11 @@ export default function HomeExperience() {
     }
 
     let isCancelled = false;
+    // Start the child reveal only after hydration has made its parent visible.
+    // Otherwise Framer's early appear animation can finish behind the hidden wrapper.
+    const introFrame = requestAnimationFrame(() => {
+      if (!isCancelled) setIntroReady(true);
+    });
 
     void waitForFrames(2).then(async () => {
       if (isCancelled) {
@@ -506,11 +514,12 @@ export default function HomeExperience() {
 
     return () => {
       isCancelled = true;
+      cancelAnimationFrame(introFrame);
     };
   }, [
     getTargetProgress,
-    homeEntry?.id,
-    homeEntry?.target,
+    homeEntryId,
+    homeEntryTarget,
     jumpToProgress,
     markHomeReady,
     sceneControls,
@@ -539,16 +548,11 @@ export default function HomeExperience() {
             className={[
               "relative",
               "origin-center",
-              "transform-gpu",
-              "will-change-[opacity,filter,transform]",
             ].join(" ")}
-            style={{
-              backfaceVisibility: "hidden",
-            }}
           >
             {/* Hero */}
 
-            <CompactIntro />
+            <CompactIntro ready={introReady || homeEntry !== null} />
 
             {/* What We Do */}
 

@@ -3,10 +3,13 @@
 import {
   motion,
   useReducedMotion,
+  useInView,
 } from "framer-motion";
+import { useCallback, useRef, useState } from "react";
 
 import ProjectImage from "@/components/media/ProjectImage";
 import type { ProjectGalleryItem } from "@/lib/project-media";
+import { keepMediaFrameUnscrolled } from "@/lib/media-frame";
 
 type ProjectGalleryProps = {
   projectSlug: string;
@@ -191,6 +194,10 @@ function GalleryFrame({
   onOpen,
   shouldReduceMotion,
 }: GalleryFrameProps) {
+  const frameRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(frameRef, { once: true, amount: 0.18 });
+  const [imageReady, setImageReady] = useState(false);
+  const handleReady = useCallback(() => setImageReady(true), []);
   const ratioClass =
     layout === "wide"
       ? "aspect-[16/9] xl:aspect-[21/9]"
@@ -198,6 +205,8 @@ function GalleryFrame({
 
   return (
     <motion.div
+      ref={frameRef}
+      data-gallery-ready={imageReady ? "true" : "false"}
       initial={
         shouldReduceMotion
           ? {
@@ -215,13 +224,13 @@ function GalleryFrame({
                 "blur(4px)",
             }
       }
-      whileInView={{
+      animate={shouldReduceMotion || (inView && imageReady) ? {
         opacity: 1,
         y: 0,
         scale: 1,
         filter:
           "blur(0px)",
-      }}
+      } : { opacity: 0, y: 20, scale: 0.994, filter: "blur(4px)" }}
       viewport={{
         once: true,
         amount: 0.18,
@@ -233,12 +242,13 @@ function GalleryFrame({
             : 1.2,
         ease,
       }}
-      className={ratioClass}
+      className={`relative ${ratioClass}`}
     >
       <motion.button
         type="button"
         aria-label={`Open ${alt}`}
         onClick={onOpen}
+        onScroll={event => keepMediaFrameUnscrolled(event.currentTarget)}
         initial="rest"
         animate="rest"
         whileHover={
@@ -271,10 +281,10 @@ function GalleryFrame({
           ease,
         }}
         className={[
-          "group/frame relative",
+          "group/frame absolute inset-0",
           "h-full w-full",
           "cursor-zoom-in",
-          "overflow-hidden rounded-sm",
+          "ez-media-frame rounded-sm",
           "bg-neutral-200",
           "text-left",
 
@@ -308,6 +318,9 @@ function GalleryFrame({
           }}
         >
           <ProjectImage
+  loading="eager"
+  fetchPriority="low"
+  onReady={handleReady}
   src={src}
   alt={alt}
   sizes={

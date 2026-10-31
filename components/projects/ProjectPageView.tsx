@@ -1,12 +1,15 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { prepareProjectImage } from "@/lib/project-images";
 import {
   motion,
   useReducedMotion,
 } from "framer-motion";
 import {
   type MouseEvent,
+  useCallback,
   useRef,
   useState,
 } from "react";
@@ -60,6 +63,7 @@ const projectIntroVisible = {
   opacity: 1,
   y: 0,
   filter: "blur(0px)",
+  transitionEnd: { filter: "none", transform: "none" },
 };
 
 export default function ProjectPageView({
@@ -76,8 +80,9 @@ export default function ProjectPageView({
   const shouldReduceMotion =
     useReducedMotion();
 
-    const { isContentReady } =
+    const { isContentReady, markProjectReady } =
   useProjectTransition();
+  const handlePosterReady = useCallback(() => markProjectReady(project.slug), [markProjectReady, project.slug]);
   // Reveal the page while the light overlay fades, avoiding a second blank beat.
   const isTransitioning = !isContentReady;
 
@@ -293,7 +298,7 @@ export default function ProjectPageView({
                 }}
                 className={[
   "relative w-full",
-  "overflow-hidden",
+  "ez-media-frame",
   "rounded-sm",
   "bg-neutral-200",
 
@@ -306,7 +311,10 @@ export default function ProjectPageView({
 ].join(" ")}
               >
                 <ProjectVideo
+  priority={index === 0}
+  onPosterReady={index === 0 ? handlePosterReady : undefined}
   src={video.src}
+  mobileSrc={video.mobileSrc}
   poster={video.poster || cover}
   title={
     video.label
@@ -782,6 +790,7 @@ function ProjectNavigationCard({
   direction,
   shouldReduceMotion,
 }: ProjectNavigationCardProps) {
+  const router = useRouter();
   const isPrevious =
     direction === "previous";
 
@@ -797,6 +806,10 @@ function ProjectNavigationCard({
 
   const href =
     `/projects/${project.slug}`;
+  function prepareDestination() {
+    router.prefetch(href);
+    void prepareProjectImage(cover, Math.min(window.innerWidth * window.devicePixelRatio, 2200)).catch(() => undefined);
+  }
 
     const allowHover =
   !shouldReduceMotion;
@@ -850,6 +863,10 @@ startProjectNavigation({
   return (
     <Link
       href={href}
+      aria-label={`${label}: ${project.title}`}
+      data-project-navigation={direction}
+      onPointerEnter={prepareDestination}
+      onFocus={prepareDestination}
       onClickCapture={handleClick}
       aria-disabled={isTransitioning}
       className={[
@@ -897,7 +914,7 @@ whileFocus={
           className={[
             "relative",
             "aspect-[16/10]",
-            "overflow-hidden rounded-sm",
+            "ez-media-frame rounded-sm",
             "bg-neutral-200",
 
             "md:aspect-[16/9]",

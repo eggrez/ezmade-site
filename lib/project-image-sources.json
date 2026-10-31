@@ -1,0 +1,1362 @@
+{
+  "/projects/fractal-design/01.jpg": [
+    {
+      "src": "/project-images/fractal-design/01-6f6b51fa94-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 1352
+    },
+    {
+      "src": "/project-images/fractal-design/01-6f6b51fa94-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 4414
+    },
+    {
+      "src": "/project-images/fractal-design/01-6f6b51fa94-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 17432
+    }
+  ],
+  "/projects/fractal-design/02.jpg": [
+    {
+      "src": "/project-images/fractal-design/02-d3ecfe9e2a-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 7498
+    },
+    {
+      "src": "/project-images/fractal-design/02-d3ecfe9e2a-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 17862
+    },
+    {
+      "src": "/project-images/fractal-design/02-d3ecfe9e2a-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 41878
+    }
+  ],
+  "/projects/fractal-design/03.jpg": [
+    {
+      "src": "/project-images/fractal-design/03-61f76f81e2-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 4672
+    },
+    {
+      "src": "/project-images/fractal-design/03-61f76f81e2-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 13374
+    },
+    {
+      "src": "/project-images/fractal-design/03-61f76f81e2-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 31100
+    }
+  ],
+  "/projects/fractal-design/04.jpg": [
+    {
+      "src": "/project-images/fractal-design/04-d18e19b5fe-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 21830
+    },
+    {
+      "src": "/project-images/fractal-design/04-d18e19b5fe-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 57472
+    },
+    {
+      "src": "/project-images/fractal-design/04-d18e19b5fe-1920.webp",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 111878
+    }
+  ],
+  "/projects/fractal-design/05.jpg": [
+    {
+      "src": "/project-images/fractal-design/05-fc5e0ed999-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 7382
+    },
+    {
+      "src": "/project-images/fractal-design/05-fc5e0ed999-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 20292
+    },
+    {
+      "src": "/project-images/fractal-design/05-fc5e0ed999-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 42240
+    }
+  ],
+  "/projects/fractal-design/06.jpg": [
+    {
+      "src": "/project-images/fractal-design/06-57dac61bbc-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 5788
+    },
+    {
+      "src": "/project-images/fractal-design/06-57dac61bbc-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 15984
+    },
+    {
+      "src": "/project-images/fractal-design/06-57dac61bbc-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 37184
+    }
+  ],
+  "/projects/fractal-design/07.jpg": [
+    {
+      "src": "/project-images/fractal-design/07-7ea59ec99b-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 7824
+    },
+    {
+      "src": "/project-images/fractal-design/07-7ea59ec99b-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 22028
+    },
+    {
+      "src": "/project-images/fractal-design/07-7ea59ec99b-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 56026
+    }
+  ],
+  "/projects/fractal-design/cover-v4.jpg": [
+    {
+      "src": "/project-images/fractal-design/cover-v4-6142f9bb98-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 11966
+    },
+    {
+      "src": "/project-images/fractal-design/cover-v4-6142f9bb98-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 30528
+    },
+    {
+      "src": "/project-images/fractal-design/cover-v4-6142f9bb98-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 66412
+    }
+  ],
+  "/projects/higgsfield/01.jpg": [
+    {
+      "src": "/project-images/higgsfield/01-97d2b2cfa3-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 19136
+    },
+    {
+      "src": "/project-images/higgsfield/01-97d2b2cfa3-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 55724
+    },
+    {
+      "src": "/project-images/higgsfield/01-97d2b2cfa3-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 136754
+    }
+  ],
+  "/projects/higgsfield/02.jpg": [
+    {
+      "src": "/project-images/higgsfield/02-47bb334a68-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 40130
+    },
+    {
+      "src": "/project-images/higgsfield/02-47bb334a68-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 108230
+    },
+    {
+      "src": "/project-images/higgsfield/02-47bb334a68-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 254346
+    }
+  ],
+  "/projects/higgsfield/03.jpg": [
+    {
+      "src": "/project-images/higgsfield/03-b409397c22-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 26806
+    },
+    {
+      "src": "/project-images/higgsfield/03-b409397c22-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 70414
+    },
+    {
+      "src": "/project-images/higgsfield/03-b409397c22-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 156900
+    }
+  ],
+  "/projects/higgsfield/04.jpg": [
+    {
+      "src": "/project-images/higgsfield/04-5b7bb1e6cb-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 28652
+    },
+    {
+      "src": "/project-images/higgsfield/04-5b7bb1e6cb-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 79466
+    },
+    {
+      "src": "/project-images/higgsfield/04-5b7bb1e6cb-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 186062
+    }
+  ],
+  "/projects/higgsfield/05.jpg": [
+    {
+      "src": "/project-images/higgsfield/05-4684034767-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 27694
+    },
+    {
+      "src": "/project-images/higgsfield/05-4684034767-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 64756
+    },
+    {
+      "src": "/project-images/higgsfield/05-4684034767-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 135982
+    }
+  ],
+  "/projects/higgsfield/06.jpg": [
+    {
+      "src": "/project-images/higgsfield/06-8e718a205c-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 14910
+    },
+    {
+      "src": "/project-images/higgsfield/06-8e718a205c-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 40456
+    },
+    {
+      "src": "/project-images/higgsfield/06-8e718a205c-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 99144
+    }
+  ],
+  "/projects/higgsfield/07.jpg": [
+    {
+      "src": "/project-images/higgsfield/07-32fbb62939-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 20294
+    },
+    {
+      "src": "/project-images/higgsfield/07-32fbb62939-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 48030
+    },
+    {
+      "src": "/project-images/higgsfield/07-32fbb62939-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 103762
+    }
+  ],
+  "/projects/higgsfield/cover.jpg": [
+    {
+      "src": "/project-images/higgsfield/cover-67c22132b1-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 27776
+    },
+    {
+      "src": "/project-images/higgsfield/cover-67c22132b1-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 73638
+    },
+    {
+      "src": "/project-images/higgsfield/cover-67c22132b1-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 205282
+    }
+  ],
+  "/projects/higgsfield-02/01.jpg": [
+    {
+      "src": "/project-images/higgsfield-02/01-c40c8c8993-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 12504
+    },
+    {
+      "src": "/project-images/higgsfield-02/01-c40c8c8993-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 36180
+    },
+    {
+      "src": "/project-images/higgsfield-02/01-c40c8c8993-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 84764
+    }
+  ],
+  "/projects/higgsfield-02/02.jpg": [
+    {
+      "src": "/project-images/higgsfield-02/02-e3b71f4ec7-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 18166
+    },
+    {
+      "src": "/project-images/higgsfield-02/02-e3b71f4ec7-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 48038
+    },
+    {
+      "src": "/project-images/higgsfield-02/02-e3b71f4ec7-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 112540
+    }
+  ],
+  "/projects/higgsfield-02/03.jpg": [
+    {
+      "src": "/project-images/higgsfield-02/03-58423d4e2d-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 31278
+    },
+    {
+      "src": "/project-images/higgsfield-02/03-58423d4e2d-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 70482
+    },
+    {
+      "src": "/project-images/higgsfield-02/03-58423d4e2d-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 151286
+    }
+  ],
+  "/projects/higgsfield-02/04.jpg": [
+    {
+      "src": "/project-images/higgsfield-02/04-9c66649b09-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 20158
+    },
+    {
+      "src": "/project-images/higgsfield-02/04-9c66649b09-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 66500
+    },
+    {
+      "src": "/project-images/higgsfield-02/04-9c66649b09-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 170120
+    }
+  ],
+  "/projects/higgsfield-02/cover.jpg": [
+    {
+      "src": "/project-images/higgsfield-02/cover-3c1f33e49c-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 23128
+    },
+    {
+      "src": "/project-images/higgsfield-02/cover-3c1f33e49c-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 62308
+    },
+    {
+      "src": "/project-images/higgsfield-02/cover-3c1f33e49c-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 143686
+    }
+  ],
+  "/projects/infinox-x-alpine/01.jpg": [
+    {
+      "src": "/project-images/infinox-x-alpine/01-1076763046-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 12096
+    },
+    {
+      "src": "/project-images/infinox-x-alpine/01-1076763046-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 29566
+    },
+    {
+      "src": "/project-images/infinox-x-alpine/01-1076763046-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 67226
+    }
+  ],
+  "/projects/infinox-x-alpine/02.jpg": [
+    {
+      "src": "/project-images/infinox-x-alpine/02-caa55aa11d-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 14750
+    },
+    {
+      "src": "/project-images/infinox-x-alpine/02-caa55aa11d-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 34774
+    },
+    {
+      "src": "/project-images/infinox-x-alpine/02-caa55aa11d-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 72886
+    }
+  ],
+  "/projects/infinox-x-alpine/03.jpg": [
+    {
+      "src": "/project-images/infinox-x-alpine/03-37b514946a-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 14210
+    },
+    {
+      "src": "/project-images/infinox-x-alpine/03-37b514946a-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 33934
+    },
+    {
+      "src": "/project-images/infinox-x-alpine/03-37b514946a-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 70858
+    }
+  ],
+  "/projects/infinox-x-alpine/04.jpg": [
+    {
+      "src": "/project-images/infinox-x-alpine/04-656d4702c2-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 14128
+    },
+    {
+      "src": "/project-images/infinox-x-alpine/04-656d4702c2-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 35582
+    },
+    {
+      "src": "/project-images/infinox-x-alpine/04-656d4702c2-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 76332
+    }
+  ],
+  "/projects/infinox-x-alpine/cover.jpg": [
+    {
+      "src": "/project-images/infinox-x-alpine/cover-480c01aa2c-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 25998
+    },
+    {
+      "src": "/project-images/infinox-x-alpine/cover-480c01aa2c-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 62546
+    },
+    {
+      "src": "/project-images/infinox-x-alpine/cover-480c01aa2c-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 126810
+    }
+  ],
+  "/projects/luma/01.jpg": [
+    {
+      "src": "/project-images/luma/01-60062bc7a9-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 18352
+    },
+    {
+      "src": "/project-images/luma/01-60062bc7a9-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 52702
+    },
+    {
+      "src": "/project-images/luma/01-60062bc7a9-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 126222
+    }
+  ],
+  "/projects/luma/02.jpg": [
+    {
+      "src": "/project-images/luma/02-fe9e186d4a-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 24966
+    },
+    {
+      "src": "/project-images/luma/02-fe9e186d4a-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 63708
+    },
+    {
+      "src": "/project-images/luma/02-fe9e186d4a-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 130108
+    }
+  ],
+  "/projects/luma/03.jpg": [
+    {
+      "src": "/project-images/luma/03-351f58b257-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 16914
+    },
+    {
+      "src": "/project-images/luma/03-351f58b257-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 50232
+    },
+    {
+      "src": "/project-images/luma/03-351f58b257-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 151268
+    }
+  ],
+  "/projects/luma/04.jpg": [
+    {
+      "src": "/project-images/luma/04-846440af6b-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 12206
+    },
+    {
+      "src": "/project-images/luma/04-846440af6b-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 38400
+    },
+    {
+      "src": "/project-images/luma/04-846440af6b-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 101490
+    }
+  ],
+  "/projects/luma/05.jpg": [
+    {
+      "src": "/project-images/luma/05-c8d75b0c53-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 27100
+    },
+    {
+      "src": "/project-images/luma/05-c8d75b0c53-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 63102
+    },
+    {
+      "src": "/project-images/luma/05-c8d75b0c53-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 130734
+    }
+  ],
+  "/projects/luma/06.jpg": [
+    {
+      "src": "/project-images/luma/06-666e278851-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 25632
+    },
+    {
+      "src": "/project-images/luma/06-666e278851-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 68104
+    },
+    {
+      "src": "/project-images/luma/06-666e278851-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 144620
+    }
+  ],
+  "/projects/luma/07.jpg": [
+    {
+      "src": "/project-images/luma/07-6c361b2a0d-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 32990
+    },
+    {
+      "src": "/project-images/luma/07-6c361b2a0d-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 80386
+    },
+    {
+      "src": "/project-images/luma/07-6c361b2a0d-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 176996
+    }
+  ],
+  "/projects/luma/cover.jpg": [
+    {
+      "src": "/project-images/luma/cover-3379944e8f-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 34746
+    },
+    {
+      "src": "/project-images/luma/cover-3379944e8f-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 95546
+    },
+    {
+      "src": "/project-images/luma/cover-3379944e8f-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 205696
+    }
+  ],
+  "/projects/my-father-used-to-say/01.jpg": [
+    {
+      "src": "/project-images/my-father-used-to-say/01-d8145ac143-640.webp",
+      "width": 640,
+      "height": 268,
+      "bytes": 24426
+    },
+    {
+      "src": "/project-images/my-father-used-to-say/01-d8145ac143-1280.webp",
+      "width": 1280,
+      "height": 536,
+      "bytes": 74336
+    },
+    {
+      "src": "/project-images/my-father-used-to-say/01-d8145ac143-2200.webp",
+      "width": 2200,
+      "height": 922,
+      "bytes": 154390
+    }
+  ],
+  "/projects/my-father-used-to-say/02.jpg": [
+    {
+      "src": "/project-images/my-father-used-to-say/02-1406877e4b-640.webp",
+      "width": 640,
+      "height": 268,
+      "bytes": 22828
+    },
+    {
+      "src": "/project-images/my-father-used-to-say/02-1406877e4b-1280.webp",
+      "width": 1280,
+      "height": 536,
+      "bytes": 57804
+    },
+    {
+      "src": "/project-images/my-father-used-to-say/02-1406877e4b-2200.webp",
+      "width": 2200,
+      "height": 922,
+      "bytes": 122106
+    }
+  ],
+  "/projects/my-father-used-to-say/03.jpg": [
+    {
+      "src": "/project-images/my-father-used-to-say/03-4246d10bc7-640.webp",
+      "width": 640,
+      "height": 268,
+      "bytes": 8496
+    },
+    {
+      "src": "/project-images/my-father-used-to-say/03-4246d10bc7-1280.webp",
+      "width": 1280,
+      "height": 536,
+      "bytes": 20360
+    },
+    {
+      "src": "/project-images/my-father-used-to-say/03-4246d10bc7-2200.webp",
+      "width": 2200,
+      "height": 922,
+      "bytes": 42448
+    }
+  ],
+  "/projects/my-father-used-to-say/04.jpg": [
+    {
+      "src": "/project-images/my-father-used-to-say/04-1cb6f71451-640.webp",
+      "width": 640,
+      "height": 268,
+      "bytes": 9046
+    },
+    {
+      "src": "/project-images/my-father-used-to-say/04-1cb6f71451-1280.webp",
+      "width": 1280,
+      "height": 536,
+      "bytes": 23000
+    },
+    {
+      "src": "/project-images/my-father-used-to-say/04-1cb6f71451-2200.webp",
+      "width": 2200,
+      "height": 922,
+      "bytes": 50866
+    }
+  ],
+  "/projects/my-father-used-to-say/05.jpg": [
+    {
+      "src": "/project-images/my-father-used-to-say/05-1b3a0ce5e2-640.webp",
+      "width": 640,
+      "height": 268,
+      "bytes": 25916
+    },
+    {
+      "src": "/project-images/my-father-used-to-say/05-1b3a0ce5e2-1280.webp",
+      "width": 1280,
+      "height": 536,
+      "bytes": 59328
+    },
+    {
+      "src": "/project-images/my-father-used-to-say/05-1b3a0ce5e2-2200.webp",
+      "width": 2200,
+      "height": 922,
+      "bytes": 114952
+    }
+  ],
+  "/projects/my-father-used-to-say/06.jpg": [
+    {
+      "src": "/project-images/my-father-used-to-say/06-fd43a5d518-640.webp",
+      "width": 640,
+      "height": 268,
+      "bytes": 14684
+    },
+    {
+      "src": "/project-images/my-father-used-to-say/06-fd43a5d518-1280.webp",
+      "width": 1280,
+      "height": 536,
+      "bytes": 41080
+    },
+    {
+      "src": "/project-images/my-father-used-to-say/06-fd43a5d518-2200.webp",
+      "width": 2200,
+      "height": 922,
+      "bytes": 84572
+    }
+  ],
+  "/projects/my-father-used-to-say/07.jpg": [
+    {
+      "src": "/project-images/my-father-used-to-say/07-6091ecd01b-640.webp",
+      "width": 640,
+      "height": 268,
+      "bytes": 29310
+    },
+    {
+      "src": "/project-images/my-father-used-to-say/07-6091ecd01b-1280.webp",
+      "width": 1280,
+      "height": 536,
+      "bytes": 73814
+    },
+    {
+      "src": "/project-images/my-father-used-to-say/07-6091ecd01b-2200.webp",
+      "width": 2200,
+      "height": 922,
+      "bytes": 151644
+    }
+  ],
+  "/projects/my-father-used-to-say/cover.jpg": [
+    {
+      "src": "/project-images/my-father-used-to-say/cover-0d71b08676-640.webp",
+      "width": 640,
+      "height": 268,
+      "bytes": 16524
+    },
+    {
+      "src": "/project-images/my-father-used-to-say/cover-0d71b08676-1280.webp",
+      "width": 1280,
+      "height": 536,
+      "bytes": 60822
+    },
+    {
+      "src": "/project-images/my-father-used-to-say/cover-0d71b08676-2200.webp",
+      "width": 2200,
+      "height": 922,
+      "bytes": 152832
+    }
+  ],
+  "/projects/neopolis/01.jpg": [
+    {
+      "src": "/project-images/neopolis/01-ed001916b1-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 34562
+    },
+    {
+      "src": "/project-images/neopolis/01-ed001916b1-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 81166
+    },
+    {
+      "src": "/project-images/neopolis/01-ed001916b1-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 162052
+    }
+  ],
+  "/projects/neopolis/02.jpg": [
+    {
+      "src": "/project-images/neopolis/02-d41c4d0914-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 39044
+    },
+    {
+      "src": "/project-images/neopolis/02-d41c4d0914-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 103734
+    },
+    {
+      "src": "/project-images/neopolis/02-d41c4d0914-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 209262
+    }
+  ],
+  "/projects/neopolis/03.jpg": [
+    {
+      "src": "/project-images/neopolis/03-53583ce7df-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 54710
+    },
+    {
+      "src": "/project-images/neopolis/03-53583ce7df-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 142978
+    },
+    {
+      "src": "/project-images/neopolis/03-53583ce7df-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 283274
+    }
+  ],
+  "/projects/neopolis/04.jpg": [
+    {
+      "src": "/project-images/neopolis/04-9bdf308d8b-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 22522
+    },
+    {
+      "src": "/project-images/neopolis/04-9bdf308d8b-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 57118
+    },
+    {
+      "src": "/project-images/neopolis/04-9bdf308d8b-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 133062
+    }
+  ],
+  "/projects/neopolis/cover.jpg": [
+    {
+      "src": "/project-images/neopolis/cover-7e1683ca2f-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 27414
+    },
+    {
+      "src": "/project-images/neopolis/cover-7e1683ca2f-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 67160
+    },
+    {
+      "src": "/project-images/neopolis/cover-7e1683ca2f-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 142992
+    }
+  ],
+  "/projects/runway/01.jpg": [
+    {
+      "src": "/project-images/runway/01-966fbe4fc7-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 29954
+    },
+    {
+      "src": "/project-images/runway/01-966fbe4fc7-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 96326
+    },
+    {
+      "src": "/project-images/runway/01-966fbe4fc7-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 260468
+    }
+  ],
+  "/projects/runway/02.jpg": [
+    {
+      "src": "/project-images/runway/02-3a37b2d2d0-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 34250
+    },
+    {
+      "src": "/project-images/runway/02-3a37b2d2d0-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 89632
+    },
+    {
+      "src": "/project-images/runway/02-3a37b2d2d0-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 213988
+    }
+  ],
+  "/projects/runway/03.jpg": [
+    {
+      "src": "/project-images/runway/03-6e94d88cfc-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 35466
+    },
+    {
+      "src": "/project-images/runway/03-6e94d88cfc-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 107434
+    },
+    {
+      "src": "/project-images/runway/03-6e94d88cfc-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 295378
+    }
+  ],
+  "/projects/runway/04.jpg": [
+    {
+      "src": "/project-images/runway/04-8e62aaea1b-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 20118
+    },
+    {
+      "src": "/project-images/runway/04-8e62aaea1b-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 86948
+    },
+    {
+      "src": "/project-images/runway/04-8e62aaea1b-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 281840
+    }
+  ],
+  "/projects/runway/cover.jpg": [
+    {
+      "src": "/project-images/runway/cover-fb99edcfe4-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 27150
+    },
+    {
+      "src": "/project-images/runway/cover-fb99edcfe4-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 85176
+    },
+    {
+      "src": "/project-images/runway/cover-fb99edcfe4-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 232614
+    }
+  ],
+  "/projects/t-bank/01.jpg": [
+    {
+      "src": "/project-images/t-bank/01-ce17a6bf84-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 34230
+    },
+    {
+      "src": "/project-images/t-bank/01-ce17a6bf84-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 74812
+    },
+    {
+      "src": "/project-images/t-bank/01-ce17a6bf84-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 150430
+    }
+  ],
+  "/projects/t-bank/02.jpg": [
+    {
+      "src": "/project-images/t-bank/02-8535377166-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 27432
+    },
+    {
+      "src": "/project-images/t-bank/02-8535377166-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 76992
+    },
+    {
+      "src": "/project-images/t-bank/02-8535377166-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 231072
+    }
+  ],
+  "/projects/t-bank/03.jpg": [
+    {
+      "src": "/project-images/t-bank/03-5687d584e2-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 16894
+    },
+    {
+      "src": "/project-images/t-bank/03-5687d584e2-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 47000
+    },
+    {
+      "src": "/project-images/t-bank/03-5687d584e2-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 175366
+    }
+  ],
+  "/projects/t-bank/04.jpg": [
+    {
+      "src": "/project-images/t-bank/04-443a8adee6-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 27836
+    },
+    {
+      "src": "/project-images/t-bank/04-443a8adee6-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 63530
+    },
+    {
+      "src": "/project-images/t-bank/04-443a8adee6-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 141100
+    }
+  ],
+  "/projects/t-bank/cover-02.jpg": [
+    {
+      "src": "/project-images/t-bank/cover-02-cf7ac210d3-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 26114
+    },
+    {
+      "src": "/project-images/t-bank/cover-02-cf7ac210d3-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 57824
+    },
+    {
+      "src": "/project-images/t-bank/cover-02-cf7ac210d3-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 137192
+    }
+  ],
+  "/projects/t-bank/cover.jpg": [
+    {
+      "src": "/project-images/t-bank/cover-e10380d7b2-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 22088
+    },
+    {
+      "src": "/project-images/t-bank/cover-e10380d7b2-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 53408
+    },
+    {
+      "src": "/project-images/t-bank/cover-e10380d7b2-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 155082
+    }
+  ],
+  "/projects/yandex-browser/cover_1.jpg": [
+    {
+      "src": "/project-images/yandex-browser/cover_1-62cd64592c-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 27112
+    },
+    {
+      "src": "/project-images/yandex-browser/cover_1-62cd64592c-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 67668
+    },
+    {
+      "src": "/project-images/yandex-browser/cover_1-62cd64592c-1920.webp",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 127042
+    }
+  ],
+  "/projects/yandex-browser/cover_2.jpg": [
+    {
+      "src": "/project-images/yandex-browser/cover_2-b056d56412-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 13980
+    },
+    {
+      "src": "/project-images/yandex-browser/cover_2-b056d56412-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 43248
+    },
+    {
+      "src": "/project-images/yandex-browser/cover_2-b056d56412-1920.webp",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 97084
+    }
+  ],
+  "/projects/yandex-browser/cover_3.jpg": [
+    {
+      "src": "/project-images/yandex-browser/cover_3-d25887f5c8-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 12198
+    },
+    {
+      "src": "/project-images/yandex-browser/cover_3-d25887f5c8-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 44612
+    },
+    {
+      "src": "/project-images/yandex-browser/cover_3-d25887f5c8-1920.webp",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 108198
+    }
+  ],
+  "/projects/yandex-browser/cover_4.jpg": [
+    {
+      "src": "/project-images/yandex-browser/cover_4-8bb7925e1c-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 17904
+    },
+    {
+      "src": "/project-images/yandex-browser/cover_4-8bb7925e1c-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 46098
+    },
+    {
+      "src": "/project-images/yandex-browser/cover_4-8bb7925e1c-1920.webp",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 89140
+    }
+  ],
+  "/projects/yandex-browser/cover_5.jpg": [
+    {
+      "src": "/project-images/yandex-browser/cover_5-1a6b35ba32-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 22004
+    },
+    {
+      "src": "/project-images/yandex-browser/cover_5-1a6b35ba32-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 66980
+    },
+    {
+      "src": "/project-images/yandex-browser/cover_5-1a6b35ba32-1920.webp",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 158428
+    }
+  ],
+  "/projects/yandex-lavka/01.jpg": [
+    {
+      "src": "/project-images/yandex-lavka/01-8ae6b435f5-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 27218
+    },
+    {
+      "src": "/project-images/yandex-lavka/01-8ae6b435f5-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 79520
+    },
+    {
+      "src": "/project-images/yandex-lavka/01-8ae6b435f5-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 198004
+    }
+  ],
+  "/projects/yandex-lavka/02.jpg": [
+    {
+      "src": "/project-images/yandex-lavka/02-a9e2fba919-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 24816
+    },
+    {
+      "src": "/project-images/yandex-lavka/02-a9e2fba919-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 68162
+    },
+    {
+      "src": "/project-images/yandex-lavka/02-a9e2fba919-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 158972
+    }
+  ],
+  "/projects/yandex-lavka/03.jpg": [
+    {
+      "src": "/project-images/yandex-lavka/03-565d13b90b-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 80930
+    },
+    {
+      "src": "/project-images/yandex-lavka/03-565d13b90b-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 215662
+    },
+    {
+      "src": "/project-images/yandex-lavka/03-565d13b90b-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 421452
+    }
+  ],
+  "/projects/yandex-lavka/04.jpg": [
+    {
+      "src": "/project-images/yandex-lavka/04-5cb37f2ac5-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 52322
+    },
+    {
+      "src": "/project-images/yandex-lavka/04-5cb37f2ac5-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 132498
+    },
+    {
+      "src": "/project-images/yandex-lavka/04-5cb37f2ac5-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 285096
+    }
+  ],
+  "/projects/yandex-lavka/cover_v2.jpg": [
+    {
+      "src": "/project-images/yandex-lavka/cover_v2-2858b962c9-640.webp",
+      "width": 640,
+      "height": 360,
+      "bytes": 40412
+    },
+    {
+      "src": "/project-images/yandex-lavka/cover_v2-2858b962c9-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 105504
+    },
+    {
+      "src": "/project-images/yandex-lavka/cover_v2-2858b962c9-2200.webp",
+      "width": 2200,
+      "height": 1238,
+      "bytes": 219266
+    }
+  ]
+}
