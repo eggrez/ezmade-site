@@ -258,6 +258,19 @@ export default function ProjectVideo({
     setDuration(0);
   }
 
+  useEffect(() => {
+    const element = videoRef.current;
+    if (!element) return;
+    // Restore the source after React's development-only setup/cleanup cycle.
+    if (element.getAttribute("src") !== activeSource) element.src = activeSource;
+    return () => {
+      // Detached players can otherwise keep downloading across project routes.
+      element.pause();
+      element.removeAttribute("src");
+      element.load();
+    };
+  }, [activeSource]);
+
   const progress =
     duration > 0
       ? Math.min(

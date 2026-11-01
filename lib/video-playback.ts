@@ -19,7 +19,7 @@ export function playbackErrorMessage(error: { name?: string; code?: number }) {
 
 // Keep both calls inside the user's click; awaiting load/readiness loses iOS activation.
 export function requestVideoPlayback(
-  video: Pick<HTMLVideoElement, "load" | "play" | "error" | "muted" | "volume">,
+  video: Pick<HTMLVideoElement, "load" | "play" | "error" | "muted" | "volume" | "readyState">,
   retry = false,
   preferences?: { muted: boolean; volume: number; nativeVolumeControl: boolean },
 ) {
@@ -27,6 +27,8 @@ export function requestVideoPlayback(
     video.muted = preferences.muted;
     if (!preferences.nativeVolumeControl) video.volume = preferences.volume;
   }
-  if (retry || video.error) video.load();
+  // A preload can stall before metadata without reporting a media error.
+  // Restart it inside the same click, retaining Safari's user activation.
+  if (retry || video.error || video.readyState === 0) video.load();
   return video.play();
 }
