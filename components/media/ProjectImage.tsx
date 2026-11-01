@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { projectImageLoader } from "@/lib/project-images";
 
 import ProjectPlaceholder from "@/components/projects/ProjectPlaceholder";
@@ -28,6 +28,19 @@ export default function ProjectImage({
   onReady,
 }: ProjectImageProps) {
   const [failedSource, setFailedSource] = useState<string | null>(null);
+  const imageRef = useRef<HTMLImageElement>(null);
+  const reportReady = useCallback((image: HTMLImageElement) => {
+    if (!onReady || image.naturalWidth <= 0) return;
+    const loadedSource = image.currentSrc;
+    void image.decode().catch(() => undefined).then(() => {
+      if (imageRef.current === image && image.isConnected && image.currentSrc === loadedSource) onReady();
+    });
+  }, [onReady]);
+  useEffect(() => {
+    // A restored/cached image may already be complete and emit no new load event.
+    const image = imageRef.current;
+    if (image?.complete) reportReady(image);
+  }, [src, reportReady]);
   if (!src) {
     return <ProjectPlaceholder title={alt} />;
   }
@@ -35,6 +48,7 @@ export default function ProjectImage({
   const fallback = failedSource === src;
   return (
     <Image
+      ref={imageRef}
       src={src}
       alt={alt}
       fill
@@ -45,10 +59,7 @@ export default function ProjectImage({
       loading={priority ? undefined : loading ?? "lazy"}
       fetchPriority={priority ? undefined : fetchPriority}
       decoding="async"
-      onLoad={event => {
-        const image = event.currentTarget;
-        if (image.naturalWidth > 0) void image.decode().catch(() => undefined).then(() => onReady?.());
-      }}
+      onLoad={event => reportReady(event.currentTarget)}
       onError={() => { if (!fallback) setFailedSource(src); }}
       draggable={false}
       style={{

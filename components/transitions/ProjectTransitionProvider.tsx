@@ -184,7 +184,6 @@ export default function ProjectTransitionProvider({
   const pathname =
     usePathname();
   const [readyProject, setReadyProject] = useState<string | null>(null);
-  const markProjectReady = useCallback((slug: string) => setReadyProject(slug), []);
   const transitionGuardRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [
@@ -210,6 +209,11 @@ export default function ProjectTransitionProvider({
     useRef<OverlayState | null>(
       null,
     );
+
+  const markProjectReady = useCallback((slug: string) => {
+    const current = overlayRef.current;
+    if (current?.mode === "forward" && current.slug === slug) setReadyProject(slug);
+  }, []);
 
   const routeTimerRef =
     useRef<ReturnType<typeof setTimeout> | null>(

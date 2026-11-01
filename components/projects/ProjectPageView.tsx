@@ -82,7 +82,9 @@ export default function ProjectPageView({
 
     const { isContentReady, markProjectReady } =
   useProjectTransition();
-  const handlePosterReady = useCallback(() => markProjectReady(project.slug), [markProjectReady, project.slug]);
+  const handlePosterReady = useCallback(() => {
+    if (!isContentReady) markProjectReady(project.slug);
+  }, [isContentReady, markProjectReady, project.slug]);
   // Reveal the page while the light overlay fades, avoiding a second blank beat.
   const isTransitioning = !isContentReady;
 
