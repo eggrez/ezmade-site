@@ -262,14 +262,14 @@ export default function ProjectVideo({
     const element = videoRef.current;
     if (!element) return;
     // Restore the source after React's development-only setup/cleanup cycle.
-    if (element.getAttribute("src") !== activeSource) element.src = activeSource;
+    if (!element.getAttribute("src")) element.src = src;
     return () => {
       // Detached players can otherwise keep downloading across project routes.
       element.pause();
       element.removeAttribute("src");
       element.load();
     };
-  }, [activeSource]);
+  }, [src]);
 
   const progress =
     duration > 0
@@ -1074,7 +1074,7 @@ export default function ProjectVideo({
         muted={isMuted}
         playsInline
         controls={useNativeControls}
-        preload={sourceChoice.ready && (priority || shouldPreload) ? "auto" : "none"}
+        preload={!sourceChoice.ready ? "none" : priority || isPlaying || isBuffering ? "auto" : shouldPreload ? "metadata" : "none"}
         aria-label={title}
         className={[
           useNativeControls ? "pointer-events-auto" : "pointer-events-none",
